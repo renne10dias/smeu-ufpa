@@ -1,0 +1,25 @@
+
+###
+GET http://localhost:8000/users/c4db0853-c05a-4c86-b35f-c767faa1ebe4
+
+
+###
+GET http://localhost:8000/users
+
+###
+GET http://localhost:8000/usersarray
+
+###
+GET http://localhost:8000/listuserforproduct
+
+###
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+    "name":"Renildo",
+    "surname": "de alguma coisa",
+    "email": "renildo@gmail.com",
+    "password": "renildo",
+    "user_types_id": "550e8400-e29b-41d4-a716-446655440000"
+}

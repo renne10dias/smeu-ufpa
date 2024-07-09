@@ -1,0 +1,26 @@
+{
+  "name": "smeu-ufpa-solid-mvc",
+  "version": "1.0.0",
+  "description": "Physical space scheduling system at the Federal University of Pará - UFPA.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch src/main.ts"
+  },
+  "keywords": [],
+  "author": "Renne Dias",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.30",
+    "prisma": "^5.11.0",
+    "tsx": "^4.16.2",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.11.0",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2"
+  }
+}
