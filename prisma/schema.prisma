@@ -16,6 +16,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   @@map("users")
   id             String    @id @default(uuid())
@@ -25,16 +26,44 @@ model User {
   password_hash  String
   created_at     DateTime
   user_types_id  String
-  products Product[] // Relacionamento com produtos
 }
 
-model Product {
-  @@map("products")
-  id       String  @id @default(uuid())
-  name     String
-  price    Float
-  quantity Int
-  userId   String
-  user     User    @relation(fields: [userId], references: [id])
+model User_types {
+  @@map("user_types")
+  id            String  @id @default(uuid())
+  type_user     String
+  
+}
+
+model Reservations {
+  @@map("reservations")
+  id              String  @id @default(uuid())
+  start_date      DateTime
+  end_date        DateTime
+  status          Boolean
+  details         String
+  created_at      DateTime
+  spaces_id       String
+  users_id        String
+}
+
+model Spaces {
+  @@map("spaces")
+  id                String  @id @default(uuid())
+  name              String
+  location          String
+  capacity          Int
+  type              String
+  equipament        String
+  activity_status   Boolean
+}
+
+model Day_schedules {
+  @@map("day_schedules")
+  id                String  @id @default(uuid())
+  start_time        DateTime
+  end_time          DateTime
+  booking_date      DateTime
+  reservations_id   String
 }
 
