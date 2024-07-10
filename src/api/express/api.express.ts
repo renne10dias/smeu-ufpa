@@ -24,6 +24,24 @@ export class ApiExpress implements Api {
         this.app.post(path, handler);
     }
 
+    public addPutRoute(
+        path: string,
+        handler: (req: Request, res: Response) => void
+    ): void {
+        this.app.put(path, handler);
+    }
+
+
+    public addDeleteRoute(
+        path: string,
+        handler: (req: Request, res: Response) => void
+    ): void {
+        this.app.delete(path, handler);
+    }
+
+
+
+
     public start(port: number) {
         this.app.listen(port, () => {
             console.log("Server runing on port " + port);

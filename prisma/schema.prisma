@@ -18,52 +18,79 @@ datasource db {
 
 
 model User {
-  @@map("users")
-  id             String    @id @default(uuid())
-  name           String
-  surname        String
-  email          String
-  password_hash  String
-  created_at     DateTime
-  user_types_id  String
+  @@map("tb_users")
+  id             String    @id @default(uuid()) @map("uuid")
+  name           String    @map("name")
+  surname        String    @map("surname")
+  email          String    @map("email")
+  passwordHash   String    @map("password_hash")
+  createdAt      DateTime  @map("created_at")
+  userTypeId     String    @unique @map("tb_user_types_uuid")
+  userType       UserType  @relation(fields: [userTypeId], references: [id])
+  reservations   Reservation[]
+
+  @@index([userTypeId])
 }
 
-model User_types {
-  @@map("user_types")
-  id            String  @id @default(uuid())
-  type_user     String
-  
+model UserType {
+  @@map("tb_user_types")
+  id        String  @id @default(uuid()) @map("uuid")
+  typeUser  String  @map("type_user")
+  user      User?
+
+  @@index([id])
 }
 
-model Reservations {
-  @@map("reservations")
-  id              String  @id @default(uuid())
-  start_date      DateTime
-  end_date        DateTime
-  status          Boolean
-  details         String
-  created_at      DateTime
-  spaces_id       String
-  users_id        String
+model Reservation {
+  @@map("tb_reservations")
+  id        String     @id @default(uuid()) @map("uuid")
+  startDate DateTime   @map("start_date")
+  endDate   DateTime   @map("end_date")
+  status    String     @map("status")
+  details   String?    @map("details")
+  createdAt DateTime   @map("created_at")
+  spaceId   String     @map("tb_spaces_uuid")
+  userId    String     @map("tb_users_uuid")
+  user      User       @relation(fields: [userId], references: [id])
+  space     Space      @relation(fields: [spaceId], references: [id])
+  daySchedules DaySchedule[]
+
+  @@index([spaceId])
+  @@index([userId])
 }
 
-model Spaces {
-  @@map("spaces")
-  id                String  @id @default(uuid())
-  name              String
-  location          String
-  capacity          Int
-  type              String
-  equipament        String
-  activity_status   Boolean
+model Space {
+  @@map("tb_spaces")
+  id            String     @id @default(uuid()) @map("uuid")
+  name          String     @map("name")
+  location      String     @map("location")
+  capacity      Int        @map("capacity")
+  type          String     @map("type")
+  equipment     String?    @map("equipment")
+  activityStatus Boolean   @map("activity_status")
+  reservations  Reservation[]
+
+  @@index([id])
 }
 
-model Day_schedules {
-  @@map("day_schedules")
-  id                String  @id @default(uuid())
-  start_time        DateTime
-  end_time          DateTime
-  booking_date      DateTime
-  reservations_id   String
+model DaySchedule {
+  @@map("tb_day_schedules")
+  id          String     @id @default(uuid()) @map("uuid")
+  startTime   DateTime   @map("start_time")
+  endTime     DateTime   @map("end_time")
+  bookingDate DateTime   @map("booking_date")
+  reservationId String   @map("tb_reservations_uuid")
+  reservation Reservation @relation(fields: [reservationId], references: [id])
+
+  @@index([reservationId])
 }
+
+model Notification {
+  @@map("notifications")
+  id        String   @id @default(uuid()) @map("uuid")
+  type      String   @map("type")
+  sendDate  DateTime @map("send_date")
+  status    String   @map("status")
+}
+
 
