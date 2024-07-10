@@ -4,14 +4,14 @@ Projeto da disciplina de PROJETO INTEGRADO II da UNIVERSIDADE FEDERAL DO PARÁ -
 Projeto Integrado II: Sistema de Marcação de
 Espaços na Universidade
 
-### 1 - PROPOSTA DE TRABALHO
+# 1 - PROPOSTA DE TRABALHO
 Este documento descreve os requisitos, a modelagem e o processo de desenvolvimento
 de um sistema de marcação de espaços na universidade. O objetivo é
 permitir que funcionnários possam reservar espaços físicos como salas de estudo,
 auditórios e laboratórios de forma eficiente e automatizada.
 
 
-### 2 - REQUISITOS DO SISTEMA
+# 2 - REQUISITOS DO SISTEMA
 #### REQUISITOS FUNCIONAIS
 - Os usuários devem poder se registrar e fazer login no sistema.
 - O sistema deve oferecer uma visão geral dos espaços disponíveis para reserva.
@@ -25,31 +25,31 @@ auditórios e laboratórios de forma eficiente e automatizada.
 - As informações de reserva devem ser armazenadas de forma segura.
 
 
-### 3 - CASOS DE USO 
+# 3 - CASOS DE USO 
 Este é o modelo entidade relacionamento do sistema de marcação de espaços físicos da UFPA.
 
 ![solid](docs/casodeuso.jpg)
 
 
-### 4 - MODELO ENTIDADE RELACIONAMENTO
+# 4 - MODELO ENTIDADE RELACIONAMENTO
 Este é o modelo entidade relacionamento do sistema de marcação de espaços físicos da UFPA.
 
 ![solid](docs/smeu-ufpa.png)
 
-## 🚀 Começando
+# 🚀 Começando
 
 Essas instruções permitirão que você obtenha uma cópia do projeto em operação na sua máquina local para fins de desenvolvimento e teste.
 
 Consulte **[Implantação](#-implanta%C3%A7%C3%A3o)** para saber como implantar o projeto.
 
-### 📋 Pré-requisitos
+# 📋 Pré-requisitos
 
 
 Para execultar o software, você precisa ter os seguintes programas instalados em sem computador.
 - node js
 - vscode
 
-### 🔧 Instalação
+# 🔧 Instalação
 
 Siga o passo-a-passo que informam o que você deve executar para ter um ambiente de desenvolvimento em execução.
 
@@ -79,7 +79,7 @@ O terminal deve mostrar algo parecido com isso.
 ```
 PRONTO, o projeto já está em execução.
 
-## ⚙️ Executando os testes
+# ⚙️ Executando os testes
 
 Explicar como executar os testes automatizados para este sistema.
 
@@ -111,25 +111,60 @@ DELETE - Apaga o customers
 http://localhost:3000/customers/1
 ```
 
-## 🛠️ Construído com
+# 🛠️ Construído com
 
 Ferramentas usadas para a criação desse projeto.
 
-* [Node.js®](https://nodejs.org/en) - é um ambiente de execução JavaScript gratuito, de código aberto e multiplataforma.
-* [Express](https://expressjs.com/) - Express.js é um framework para Node.js que fornece recursos mínimos para construção de servidores web.
-* [Nodemon](https://www.npmjs.com/package/nodemon) - O nodemon e uma biblioteca usada para realizar o autoloading do projeto.
+* ***[Node.js®](https://nodejs.org/en)*** - é um ambiente de execução JavaScript gratuito, de código aberto e multiplataforma.
+* ***[Typescript®](https://www.typescriptlang.org/)*** - TypeScript é uma linguagem de programação fortemente tipada baseada em JavaScript, oferecendo melhores ferramentas em qualquer escala.
+* ***[Express](https://expressjs.com/)*** - Express.js é um framework para Node.js que fornece recursos mínimos para construção de servidores web.
+* ***[Prisma](https://www.prisma.io/)*** - O Prisma oferece a melhor experiência para sua equipe trabalhar e interagir com bancos de dados. Até mesmo coisas complexas como pool de conexões, cache e assinaturas de banco de dados em tempo real são muito fáceis com nossos produtos.
 
-## ✒️ Autores
+# 🛠️ PADRÃO DE PROJETO APLICADO - DESIGN PATTERNS
+Padrões de projeto (design patterns) são soluções típicas para problemas comuns em projeto de software. Cada padrão é como uma planta de construção que você pode customizar para resolver um problema de projeto particular em seu código.
+
+Padrões são como um conjunto de ferramentas
+para soluções de problemas comuns em design
+de software. Eles definem uma linguagem
+comum que ajuda sua equipe a se
+comunicar mais eficientemente.
+
+## SOLID
+O acrônimo ***SOLID*** é um conjunto de princípios de design de código que visam facilitar a manutenção e a evolução do software. Ele foi introduzido por Robert C. Martin em 2000 e é composto por cinco princípios:
+
+- **S** - Single Responsibility Principle (Princípio da Responsabilidade Única)
+- **O** - Open/Closed Principle (Princípio do Aberto/Fechado)
+- **L** - Liskov Substitution Principle (Princípio da Substituição de Liskov)
+- **I** - Interface Segregation Principle (Princípio da Segregação de Interfaces)
+- **D** - Dependency Inversion Principle (Princípio da Inversão de Dependências)
+
+  ![solid](https://github.com/doutorwaka/classical-mvc-solid/assets/107580593/221025cc-4531-4721-a715-2944f8067d0b)
+
+## MVC
+
+O ***MVC*** é um padrão de arquitetura de software que separa a aplicação em três componentes principais: Model, View e Controller. O objetivo é separar a lógica de negócio da interface do usuário, facilitando a manutenção e a evolução do software.
+
+- **Model** - Representa a camada de dados da aplicação. É responsável por acessar o banco de dados, realizar operações de CRUD e representar os objetos de negócio.
+
+- **View** - Representa a camada de apresentação da aplicação. É responsável por exibir os dados ao usuário e capturar as interações do usuário.
+
+- **Controller** - Representa a camada de controle da aplicação. É responsável por receber as requisições do usuário, chamar os métodos de serviço e retornar a resposta ao usuário.
+
+  ![mvc-2](https://github.com/doutorwaka/classical-mvc-solid/assets/107580593/a378db84-fe4d-4b5d-997e-7899b3c8e661)
+
+# ✒️ Autores
+
+
 
 
 * **Renne Dias** - *Trabalho Inicial* - [umdesenvolvedor](https://github.com/linkParaPerfil)
 
 
-## 📄 Licença
+# 📄 Licença
 
 Este projeto está sob a licença (projetosdiasdev) - visite o [SITE](https://projetosdiasdev.com).
 
-## 🎁 Expressões de gratidão
+# 🎁 Expressões de gratidão
 
 * Conte a outras pessoas sobre este projeto 📢;
 * Convide alguém da equipe para uma cerveja 🍺;
