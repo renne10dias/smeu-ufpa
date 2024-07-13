@@ -19,9 +19,9 @@ export class UsersRepositoryPrisma implements UsersRepository {
                 name: user.name,
                 surname: user.surname,
                 email: user.email,
-                password_hash: user.password_hash,
-                created_at: user.created_at,
-                user_types_id: user.user_types_id,
+                passwordHash: user.password_hash,
+                createdAt: user.created_at,
+                userTypeId: user.user_types_id,
             },
         });
     }
@@ -35,7 +35,7 @@ export class UsersRepositoryPrisma implements UsersRepository {
             name: user.name,
             surname: user.surname,
             email: user.email,
-            created_at: user.created_at.toISOString(),
+            created_at: user.createdAt.toISOString(),
         };
     }
 
@@ -47,7 +47,7 @@ export class UsersRepositoryPrisma implements UsersRepository {
             name: user.name,
             surname: user.surname,
             email: user.email,
-            created_at: user.created_at.toISOString(),
+            created_at: user.createdAt.toISOString(),
         }));
     }
 
@@ -99,7 +99,7 @@ export class UsersRepositoryPrisma implements UsersRepository {
             name: user.name,
             surname: user.surname,
             email: user.email,
-            created_at: user.created_at.toISOString(),
+            created_at: user.createdAt.toISOString(),
         }));
 
         return { users };
@@ -147,26 +147,14 @@ export class UsersRepositoryPrisma implements UsersRepository {
         });
     }
 
-    
 
     public async listUsersWithProducts(): Promise<ListUserProductRepositoryOutputDto[]> {
-        const usersWithProducts = await this.prisma.user.findMany({
-            include: {
-                products: true, // Certifique-se de que a relação de produtos esteja configurada corretamente no Prisma
-            },
-        });
-
-        return usersWithProducts.map(user => ({
-            id: user.id,
-            name: user.name,
-            products: user.products.map(product => ({
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                quantity: product.quantity,
-            })),
-        }));
+        throw new Error("Method not implemented.");
     }
+
+    
+
+    
 
 
 

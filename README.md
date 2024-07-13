@@ -19,6 +19,13 @@ auditórios e laboratórios de forma eficiente e automatizada.
 - O sistema deve enviar confirmações de reserva por e-mail aos usuários.
 - Administradores do sistema devem poder adicionar, modificar ou remover espaços disponíveis.
 
+##### TIPOS DE USUÁRIOS DO SISTEMA
+- Administrador - vai criar, atualizar, remover e reservar espaços, alem de cadastrar funcionarios.
+
+- Funcionário - vai poder apenas ver espaços disponives e reservar espaços.
+
+- Visitantes - vai poder criar uma conta, visualizar espaços disponiveis e solicitar uma reserva no sistema.
+
 #### REQUISITOS NÃO FUNCIONAIS
 - O sistema deve ser acessível através de qualquer dispositivo conectado á internet.
 - A interface do usuário deve ser intuitiva e fácil de usar.
