@@ -4,7 +4,6 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-
 // npx prisma db push
 
 generator client {
@@ -16,17 +15,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   @@map("tb_users")
-  id             String    @id @default(uuid()) @map("uuid")
+  uuid           String    @id @default(uuid()) @map("uuid")
   name           String    @map("name")
   surname        String    @map("surname")
   email          String    @map("email")
   passwordHash   String    @map("password_hash")
   createdAt      DateTime  @map("created_at")
+  activated      Boolean   @map("activated")
   userTypeId     String    @unique @map("tb_user_types_uuid")
-  userType       UserType  @relation(fields: [userTypeId], references: [id])
+  userType       UserType  @relation(fields: [userTypeId], references: [uuid])
   reservations   Reservation[]
 
   @@index([userTypeId])
@@ -34,63 +33,73 @@ model User {
 
 model UserType {
   @@map("tb_user_types")
-  id        String  @id @default(uuid()) @map("uuid")
-  typeUser  String  @map("type_user")
-  user      User?
+  uuid        String  @id @default(uuid()) @map("uuid")
+  typeUser    String  @map("type_user")
+  users       User[]
 
-  @@index([id])
+  @@index([uuid])
 }
 
 model Reservation {
   @@map("tb_reservations")
-  id        String     @id @default(uuid()) @map("uuid")
-  startDate DateTime   @map("start_date")
-  endDate   DateTime   @map("end_date")
-  status    String     @map("status")
-  details   String?    @map("details")
-  createdAt DateTime   @map("created_at")
-  spaceId   String     @map("tb_spaces_uuid")
-  userId    String     @map("tb_users_uuid")
-  user      User       @relation(fields: [userId], references: [id])
-  space     Space      @relation(fields: [spaceId], references: [id])
-  daySchedules DaySchedule[]
+  uuid           String       @id @default(uuid()) @map("uuid")
+  startDate      DateTime     @map("start_date")
+  endDate        DateTime     @map("end_date")
+  status         String       @map("status")
+  details        String?      @map("details")
+  createdAt      DateTime     @map("created_at")
+  spaceId        String       @map("tb_spaces_uuid")
+  userId         String       @map("tb_users_uuid")
+  shiftId        String       @map("tb_shift_uuid")
+  user           User         @relation(fields: [userId], references: [uuid])
+  space          Space        @relation(fields: [spaceId], references: [uuid])
+  shift          Shift        @relation(fields: [shiftId], references: [uuid])
+  daySchedules   DaySchedule[]
 
-  @@index([spaceId])
+  @@index([spaceId])  
   @@index([userId])
+  @@index([shiftId])
 }
 
 model Space {
   @@map("tb_spaces")
-  id            String     @id @default(uuid()) @map("uuid")
-  name          String     @map("name")
-  location      String     @map("location")
-  capacity      Int        @map("capacity")
-  type          String     @map("type")
-  equipment     String?    @map("equipment")
-  activityStatus Boolean   @map("activity_status")
-  reservations  Reservation[]
+  uuid             String       @id @default(uuid()) @map("uuid")
+  name             String       @map("name")
+  location         String       @map("location")
+  capacity         Int          @map("capacity")
+  type             String       @map("type")
+  equipment        String?      @map("equipment")
+  activityStatus   Boolean      @map("activity_status")
+  reservations     Reservation[]
 
-  @@index([id])
+  @@index([uuid])
+}
+
+model Shift {
+  @@map("tb_shift")
+  uuid           String       @id @default(uuid()) @map("uuid")
+  nameShift      String       @map("name_shift")
+  reservations   Reservation[]
+
+  @@index([uuid])
 }
 
 model DaySchedule {
   @@map("tb_day_schedules")
-  id          String     @id @default(uuid()) @map("uuid")
-  startTime   DateTime   @map("start_time")
-  endTime     DateTime   @map("end_time")
-  bookingDate DateTime   @map("booking_date")
-  reservationId String   @map("tb_reservations_uuid")
-  reservation Reservation @relation(fields: [reservationId], references: [id])
+  uuid          String     @id @default(uuid()) @map("uuid")
+  startTime     DateTime   @map("start_time")
+  endTime       DateTime   @map("end_time")
+  bookingDate   DateTime   @map("booking_date")
+  reservationId String     @map("tb_reservations_uuid")
+  reservation   Reservation @relation(fields: [reservationId], references: [uuid])
 
   @@index([reservationId])
 }
 
 model Notification {
   @@map("notifications")
-  id        String   @id @default(uuid()) @map("uuid")
-  type      String   @map("type")
-  sendDate  DateTime @map("send_date")
-  status    String   @map("status")
+  uuid       String   @id @default(uuid()) @map("uuid")
+  type       String   @map("type")
+  sendDate   DateTime @map("send_date")
+  status     String   @map("status")
 }
-
-
