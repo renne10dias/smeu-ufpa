@@ -24,7 +24,7 @@ model User {
   passwordHash   String    @map("password_hash")
   createdAt      DateTime  @map("created_at")
   activated      Boolean   @map("activated")
-  userTypeId     String    @unique @map("tb_user_types_uuid")
+  userTypeId     String    @map("tb_user_types_uuid")
   userType       UserType  @relation(fields: [userTypeId], references: [uuid])
   reservations   Reservation[]
 
@@ -37,7 +37,7 @@ model UserType {
   typeUser    String  @map("type_user")
   users       User[]
 
-  @@index([uuid])
+  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
 }
 
 model Reservation {
@@ -54,7 +54,6 @@ model Reservation {
   user           User         @relation(fields: [userId], references: [uuid])
   space          Space        @relation(fields: [spaceId], references: [uuid])
   shift          Shift        @relation(fields: [shiftId], references: [uuid])
-  daySchedules   DaySchedule[]
 
   @@index([spaceId])  
   @@index([userId])
@@ -72,7 +71,7 @@ model Space {
   activityStatus   Boolean      @map("activity_status")
   reservations     Reservation[]
 
-  @@index([uuid])
+  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
 }
 
 model Shift {
@@ -81,19 +80,7 @@ model Shift {
   nameShift      String       @map("name_shift")
   reservations   Reservation[]
 
-  @@index([uuid])
-}
-
-model DaySchedule {
-  @@map("tb_day_schedules")
-  uuid          String     @id @default(uuid()) @map("uuid")
-  startTime     DateTime   @map("start_time")
-  endTime       DateTime   @map("end_time")
-  bookingDate   DateTime   @map("booking_date")
-  reservationId String     @map("tb_reservations_uuid")
-  reservation   Reservation @relation(fields: [reservationId], references: [uuid])
-
-  @@index([reservationId])
+  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
 }
 
 model Notification {
@@ -103,3 +90,4 @@ model Notification {
   sendDate   DateTime @map("send_date")
   status     String   @map("status")
 }
+
