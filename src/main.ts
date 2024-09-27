@@ -1,16 +1,15 @@
 import { ApiExpress } from "./api/express/ApiExpress";
 import { NotificationController } from "./api/express/controllers/NotificationController";
+import { AuthMiddleware } from "./middlewares/AuthMiddleware"; // Ajuste o caminho conforme necessário
 
 function main() {
     const api = new ApiExpress();
 
-    
-
     // Rotas de Notificações
-    api.addPostRoute("/notifications", NotificationController, 'create'); // Uso simplificado
-    api.addGetRoute("/notifications/:id", NotificationController, 'find'); // Exemplo de GET
-    api.addPutRoute("/notifications/:id", NotificationController, 'update'); // Exemplo de PUT
-    api.addDeleteRoute("/notifications/:id", NotificationController, 'delete'); // Exemplo de DELETE
+    api.addPostRoute("/notifications", [], NotificationController, 'create'); // Rota sem middleware
+    api.addGetRoute("/notifications/:id", [AuthMiddleware], NotificationController, 'find'); // Exemplo de GET com middleware
+    api.addPutRoute("/notifications/:id", [AuthMiddleware], NotificationController, 'update'); // Exemplo de PUT com middleware
+    api.addDeleteRoute("/notifications/:id", [AuthMiddleware], NotificationController, 'delete'); // Exemplo de DELETE com middleware
 
     // Início do servidor
     api.start(8000);
