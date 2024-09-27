@@ -1,7 +1,7 @@
 import { Notification } from "../../entities/Notification";
 
 export type CreateOutputDto_Service = {
-    uuid: string;
+    uuid?: string;
 };
 
 export type FindOutputDto_Service = {

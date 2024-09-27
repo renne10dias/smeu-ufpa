@@ -1,25 +1,18 @@
-import { ApiExpress } from "./api/express/api.express";
-import { UsersController } from "./api/express/controllers/users.controller";
+import { ApiExpress } from "./api/express/ApiExpress";
+import { NotificationController } from "./api/express/controllers/NotificationController";
 
 function main() {
-    const api = ApiExpress.build();
+    const api = new ApiExpress();
 
-
-    const usersController = UsersController.build();
-
-
-    api.addGetRoute("/users/:id", usersController.find);
-    api.addGetRoute("/users", usersController.list);
-    api.addGetRoute("/usersarray", usersController.listArrayUsers);
-
-
-    api.addGetRoute("/listuserforproduct", usersController.listUserForProduct);
-
-
-
-    api.addPostRoute("/users", usersController.create);
     
 
+    // Rotas de Notificações
+    api.addPostRoute("/notifications", NotificationController, 'create'); // Uso simplificado
+    api.addGetRoute("/notifications/:id", NotificationController, 'find'); // Exemplo de GET
+    api.addPutRoute("/notifications/:id", NotificationController, 'update'); // Exemplo de PUT
+    api.addDeleteRoute("/notifications/:id", NotificationController, 'delete'); // Exemplo de DELETE
+
+    // Início do servidor
     api.start(8000);
 }
 
