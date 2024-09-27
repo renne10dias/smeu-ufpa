@@ -38,6 +38,21 @@ export class NotificationController {
         }
     }
 
+
+    public async find(request: Request, response: Response): Promise<Response> {
+        try {
+            const { id } = request.params;
+
+            const output = await this.notificationService.find(id)
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+
+
     // Método para atualizar uma notificação
     public async update(request: Request, response: Response): Promise<Response> {
         try {
