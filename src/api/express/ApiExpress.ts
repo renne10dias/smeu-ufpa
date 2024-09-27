@@ -1,7 +1,19 @@
 import { Request, Response } from "express";
 
 export class ApiExpress {
+    private static instance: ApiExpress; // Variável estática para armazenar a instância única
     private routes: { method: string; path: string; handler: Function }[] = [];
+
+    // Construtor privado para evitar a instância externa
+    private constructor() {}
+
+    // Método para obter a instância única
+    public static getInstance(): ApiExpress {
+        if (!ApiExpress.instance) {
+            ApiExpress.instance = new ApiExpress(); // Cria uma nova instância se não existir
+        }
+        return ApiExpress.instance; // Retorna a instância única
+    }
 
     // Método para adicionar rotas POST
     public addPostRoute(path: string, Controller: any, methodName: string) {
