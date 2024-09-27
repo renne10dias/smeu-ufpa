@@ -17,7 +17,7 @@ export class AuthMiddleware {
 
         try {
             const decoded = this.authJwt.verifyToken(token); // Verifica o token
-            req.user = decoded; // Salva os dados do usuário na requisição
+        
             next(); // Passa para o próximo middleware ou rota
         } catch (error) {
             return res.status(401).json({ error: "Token inválido" }); // Retorna erro se o token for inválido

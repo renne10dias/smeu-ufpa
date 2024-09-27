@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { prisma } from "../../../util/prisma.util";
-import { NotificationRepository } from "../../../repositories/notification/prisma/NotificationRepository";
-import { NotificationService } from "../../../services/notification/implementation/NotificationService";
-import { Notification } from "../../../entities/Notification";
+import { prisma } from "../../util/prisma.util";
+import { NotificationRepository } from "../../repositories/notification/prisma/NotificationRepository";
+import { NotificationService } from "../../services/notification/implementation/NotificationService";
+import { Notification } from "../../entities/Notification";
 
 export class NotificationController {
     private notificationService: NotificationService;
