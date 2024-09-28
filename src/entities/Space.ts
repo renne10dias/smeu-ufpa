@@ -1,20 +1,20 @@
 export class Space {
-    private uuid: string;
+    private uuid?: string;
     private name: string;
     private location: string;
     private capacity: number;
     private type: string;
-    private equipment: string | null;
+    private equipment?: string;
     private activityStatus: boolean;
 
     constructor(
-        uuid: string,
         name: string,
         location: string,
         capacity: number,
         type: string,
-        equipment: string | null,
-        activityStatus: boolean
+        activityStatus: boolean,
+        uuid?: string,
+        equipment?: string,
     ) {
         this.uuid = uuid;
         this.name = name;
@@ -26,7 +26,7 @@ export class Space {
     }
 
     // Getters
-    public getUuid(): string {
+    public getUuid(): string | undefined {
         return this.uuid;
     }
 
@@ -46,7 +46,7 @@ export class Space {
         return this.type;
     }
 
-    public getEquipment(): string | null {
+    public getEquipment(): string | undefined {
         return this.equipment;
     }
 
@@ -55,6 +55,9 @@ export class Space {
     }
 
     // Setters
+    public setUuid(value: string): void {
+        this.uuid = value;
+    }
     public setName(value: string): void {
         this.name = value;
     }
@@ -71,7 +74,7 @@ export class Space {
         this.type = value;
     }
 
-    public setEquipment(value: string | null): void {
+    public setEquipment(value: string | undefined): void {
         this.equipment = value;
     }
 

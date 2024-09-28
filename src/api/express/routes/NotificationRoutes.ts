@@ -10,5 +10,3 @@ export class NotificationRoutes {
     }
 }
 
-// Instancia a classe e registra as rotas automaticamente
-NotificationRoutes.registerRoutes(ApiExpress.getInstance());
