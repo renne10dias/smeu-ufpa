@@ -1,94 +1,86 @@
 import { Request, Response } from "express";
+import express, { RequestHandler } from "express";
+import winston from "winston";
 
 export class ApiExpress {
-    private static instance: ApiExpress; // Variável estática para armazenar a instância única
-    private routes: { method: string; path: string; handler: Function }[] = [];
+    private static instance: ApiExpress;
+    private routes: { method: 'GET' | 'POST' | 'PUT' | 'DELETE'; path: string; handler: RequestHandler }[] = [];
+    private logger: winston.Logger;
 
-    // Construtor privado para evitar a instância externa
-    private constructor() {}
-
-    // Método para obter a instância única
-    public static getInstance(): ApiExpress {
-        if (!ApiExpress.instance) {
-            ApiExpress.instance = new ApiExpress(); // Cria uma nova instância se não existir
-        }
-        return ApiExpress.instance; // Retorna a instância única
+    private constructor() {
+        this.logger = winston.createLogger({
+            level: 'info',
+            format: winston.format.combine(
+                winston.format.timestamp(),
+                winston.format.json()
+            ),
+            transports: [
+                new winston.transports.Console(),
+                new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+                new winston.transports.File({ filename: 'logs/combined.log' }),
+            ],
+        });
     }
 
-    // Método para adicionar rotas POST
+    public static getInstance(): ApiExpress {
+        if (!ApiExpress.instance) {
+            ApiExpress.instance = new ApiExpress();
+        }
+        return ApiExpress.instance;
+    }
+
     public addPostRoute(path: string, Controller: any, methodName: string) {
-        const controller = Controller.build(); // Instancia o controlador
-
-        const handler = async (req: Request, res: Response) => {
-            try {
-                await controller[methodName](req, res);
-            } catch (error) {
-                res.status(500).json({ error: (error as Error).message });
-            }
-        };
-
+        const controller = Controller.build();
+        const handler = this.createHandler(controller, methodName);
         this.routes.push({ method: 'POST', path, handler });
     }
 
-    // Método para adicionar rotas GET
     public addGetRoute(path: string, Controller: any, methodName: string) {
-        const controller = Controller.build(); // Instancia o controlador
-
-        const handler = async (req: Request, res: Response) => {
-            try {
-                await controller[methodName](req, res);
-            } catch (error) {
-                res.status(500).json({ error: (error as Error).message });
-            }
-        };
-
+        const controller = Controller.build();
+        const handler = this.createHandler(controller, methodName);
         this.routes.push({ method: 'GET', path, handler });
     }
 
-    // Método para adicionar rotas PUT
     public addPutRoute(path: string, Controller: any, methodName: string) {
-        const controller = Controller.build(); // Instancia o controlador
-
-        const handler = async (req: Request, res: Response) => {
-            try {
-                await controller[methodName](req, res);
-            } catch (error) {
-                res.status(500).json({ error: (error as Error).message });
-            }
-        };
-
+        const controller = Controller.build();
+        const handler = this.createHandler(controller, methodName);
         this.routes.push({ method: 'PUT', path, handler });
     }
 
-    // Método para adicionar rotas DELETE
     public addDeleteRoute(path: string, Controller: any, methodName: string) {
-        const controller = Controller.build(); // Instancia o controlador
-
-        const handler = async (req: Request, res: Response) => {
-            try {
-                await controller[methodName](req, res);
-            } catch (error) {
-                res.status(500).json({ error: (error as Error).message });
-            }
-        };
-
+        const controller = Controller.build();
+        const handler = this.createHandler(controller, methodName);
         this.routes.push({ method: 'DELETE', path, handler });
     }
 
-    // Método para iniciar o servidor e registrar as rotas
+    private createHandler(controller: any, methodName: string) {
+        return async (req: Request, res: Response) => {
+            try {
+                await controller[methodName](req, res);
+            } catch (error) {
+                this.logger.error(`Error: ${(error as Error).message}`);
+                res.status(500).json({ error: (error as Error).message });
+            }
+        };
+    }
+
     public start(port: number) {
-        const express = require('express');
         const app = express();
-        
-        // Middleware para parsing de JSON
         app.use(express.json());
 
-        // Adiciona as rotas ao express
         this.routes.forEach(route => {
-            app[route.method.toLowerCase()](route.path, route.handler);
+            // Mude aqui
+            app[route.method.toLowerCase() as 'get' | 'post' | 'put' | 'delete'](route.path, route.handler);
+        });
+
+        // Middleware de controle de erros
+        app.use((err: Error, req: Request, res: Response, next: Function) => {
+            this.logger.error(`Error: ${err.message}`);
+            res.status(500).json({ error: err.message });
         });
 
         app.listen(port, () => {
+            this.logger.info(`Server running on port ${port}`);
             console.log(`Server running on port ${port}`);
         });
     }

@@ -1,3 +1,4 @@
+// NotificationRoutes.ts
 import { ApiExpress } from "../ApiExpress";
 import { NotificationController } from "../controllers/NotificationController";
 
