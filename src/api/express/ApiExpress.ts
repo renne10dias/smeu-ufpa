@@ -1,3 +1,4 @@
+// ApiExpress.ts
 import { Request, Response } from "express";
 import express, { RequestHandler } from "express";
 import winston from "winston";
@@ -69,7 +70,6 @@ export class ApiExpress {
         app.use(express.json());
 
         this.routes.forEach(route => {
-            // Mude aqui
             app[route.method.toLowerCase() as 'get' | 'post' | 'put' | 'delete'](route.path, route.handler);
         });
 

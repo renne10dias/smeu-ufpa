@@ -3,13 +3,20 @@ import { ApiExpress } from "../ApiExpress";
 import { NotificationController } from "../controllers/NotificationController";
 
 export class NotificationRoutes {
-    public static registerRoutes(api: ApiExpress) {
-        api.addPostRoute("/notifications", NotificationController, 'create');
-        api.addGetRoute("/notifications/:id", NotificationController, 'find');
-        api.addPutRoute("/notifications/:id", NotificationController, 'update');
-        api.addDeleteRoute("/notifications/:id", NotificationController, 'delete');
+    private static api: ApiExpress = ApiExpress.getInstance();
+
+    // Método estático para registrar rotas
+    public static registerRoutes() {
+        this.api.addPostRoute("/notifications", NotificationController, 'create');
+        this.api.addGetRoute("/notifications/:id", NotificationController, 'find');
+        this.api.addPutRoute("/notifications/:id", NotificationController, 'update');
+        this.api.addDeleteRoute("/notifications/:id", NotificationController, 'delete');
+    }
+
+    // Invocando o método de registro no carregamento da classe
+    static {
+        this.registerRoutes();
     }
 }
 
-// Instancia a classe e registra as rotas automaticamente
-NotificationRoutes.registerRoutes(ApiExpress.getInstance());
+new NotificationRoutes(); 
