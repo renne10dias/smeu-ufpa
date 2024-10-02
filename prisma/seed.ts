@@ -31,7 +31,7 @@ class Seed {
     const users = [
       {
         uuid: "04fd1c01-64aa-4715-afcf-54e6ff0197fe",
-        typeUser: "Noite",
+        typeUser: "Manhã",
       },
       {
         uuid: "12345678-90ab-cdef-1234-567891abcdef",

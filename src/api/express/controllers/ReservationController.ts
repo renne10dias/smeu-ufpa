@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { prisma } from "../../../util/prisma.util";
+import { ReservationRepository } from "../../../repositories/reservation/prisma/ReservationRepository";
 import { ReservationService } from "../../../services/reservation/ReservationService";
 import { Reservation } from "../../../entities/Reservation";
 import Joi from 'joi';
@@ -10,13 +12,26 @@ export class ReservationController {
         this.reservationService = reservationService;
     }
 
-    // Method to create a reservation
+    // Método estático para construir o controlador
+    public static build() {
+        const reservationRepository = ReservationRepository.build(prisma);
+        const reservationService = ReservationService.build(reservationRepository);
+        return new ReservationController(reservationService);
+    }
+
+
+
+    
+
+
+
+    // Método para criar uma reserva
     public async create(request: Request, response: Response): Promise<Response> {
 
         const reservationSchema = Joi.object({
-            startDate: Joi.date,
-            endDate: Joi.date,
-            status: Joi.boolean,
+            startDate: Joi.date().required(),
+            endDate: Joi.date().required(),
+            status: Joi.boolean().required(),
             details: Joi.string().required(),
             spaceId: Joi.string().required(),
             userId: Joi.string().required(),
@@ -34,7 +49,8 @@ export class ReservationController {
             const reservation = new Reservation(startDate, endDate, status, details, spaceId, userId, shiftId, undefined, undefined);
             const output = await this.reservationService.create(reservation);
 
-            return response.status(201).json({ message: "Reservation created successfully", data: output });
+            return response.status(201).json( output );
+
         } catch (error) {
             console.error("Error while creating reservation:", error);
             return response.status(500).json({ error: (error as Error).message });

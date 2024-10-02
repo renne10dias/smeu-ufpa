@@ -1,5 +1,6 @@
 import { ApiExpress } from "./api/express/ApiExpress";
 import { NotificationRoutes } from "./api/express/routes/NotificationRoutes";
+import { ReservationRoutes } from "./api/express/routes/ReservationRoutes";
 import { SpaceRoutes } from "./api/express/routes/SpaceRoutes";
 import { UserRoutes } from "./api/express/routes/UserRoutes";
 
@@ -10,6 +11,7 @@ function main() {
     NotificationRoutes.registerRoutes(ApiExpress.getInstance());
     SpaceRoutes.registerRoutes(ApiExpress.getInstance());
     UserRoutes.registerRoutes(ApiExpress.getInstance());
+    ReservationRoutes.registerRoutes(ApiExpress.getInstance());
 
     // Início do servidor
     api.start(8000);

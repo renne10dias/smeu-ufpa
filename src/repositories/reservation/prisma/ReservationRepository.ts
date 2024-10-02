@@ -15,10 +15,12 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export class ReservationRepository implements ReservationRepositoryInterface {
-    private prisma: PrismaClient;
 
-    constructor(prisma: PrismaClient) {
-        this.prisma = prisma;
+    private constructor(readonly prisma: PrismaClient) {}
+
+    // Método estático para construir o repositório
+    public static build(prisma: PrismaClient) {
+        return new ReservationRepository(prisma);
     }
 
     // Create (Save a new reservation)
