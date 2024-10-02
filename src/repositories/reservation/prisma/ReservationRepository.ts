@@ -15,21 +15,20 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export class ReservationRepository implements ReservationRepositoryInterface {
-    private constructor(readonly prisma: PrismaClient) {}
+    private prisma: PrismaClient;
 
-    // Método estático para construir o repositório
-    public static build(prisma: PrismaClient) {
-        return new ReservationRepository(prisma);
+    constructor(prisma: PrismaClient) {
+        this.prisma = prisma;
     }
 
-    // Create (Salvar uma nova notificação)
-    public async create(reservation: Reservation): Promise<void> {
+    // Create (Save a new reservation)
+    public async create(reservation: Reservation): Promise<Boolean> {
         try {
-            const createdAt = dayjs().utc().toDate(); // Obtemos a data atual no formato UTC
+            const createdAt = dayjs().utc().toDate(); // Get current date in UTC
 
             await this.prisma.reservation.create({
                 data: {
-                    uuid: reservation.getUuid(),    // Garante que o UUID foi atribuído no serviço
+                    uuid: reservation.getUuid(),    // Ensure UUID is assigned
                     startDate: reservation.getStartDate(),
                     endDate: reservation.getEndDate(),
                     status: reservation.getStatus(),
@@ -40,15 +39,11 @@ export class ReservationRepository implements ReservationRepositoryInterface {
                     shiftId: reservation.getShiftId(),
                 },
             });
+
+            return true; // Return true if creation is successful
         } catch (error) {
-            throw new Error("Erro ao criar notificação");
+            console.error("Error while creating reservation:", error);
+            return false; // Return false if an error occurs
         }
     }
-
-    
-
-    
-    
-
-    
 }

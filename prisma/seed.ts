@@ -27,6 +27,29 @@ class Seed {
     }
   }
 
+  public async saveShift(): Promise<void> {
+    const users = [
+      {
+        uuid: "04fd1c01-64aa-4715-afcf-54e6ff0197fe",
+        typeUser: "Noite",
+      },
+      {
+        uuid: "12345678-90ab-cdef-1234-567891abcdef",
+        typeUser: "Tarde",
+      },
+      {
+        uuid: "abcdef12-3456-7890-abcd-ef1334567890",
+        typeUser: "Noite",
+      },
+    ];
+
+    for (const user of users) {
+      await prisma.userType.create({
+        data: user,
+      });
+    }
+  }
+
   public  async seedUserAdmin() {
     await prisma.user.create({
         data: {
