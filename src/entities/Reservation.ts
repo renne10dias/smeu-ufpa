@@ -1,24 +1,24 @@
 export class Reservation {
-    private uuid: string;
+    private uuid?: string;
     private startDate: Date;
     private endDate: Date;
     private status: string;
     private details: string | null;
-    private createdAt: Date;
+    private createdAt?: Date;
     private spaceId: string;
     private userId: string;
     private shiftId: string;
 
     constructor(
-        uuid: string,
         startDate: Date,
         endDate: Date,
         status: string,
         details: string | null,
-        createdAt: Date,
         spaceId: string,
         userId: string,
-        shiftId: string
+        shiftId: string,
+        uuid?: string,
+        createdAt?: Date,
     ) {
         this.uuid = uuid;
         this.startDate = startDate;
@@ -32,7 +32,7 @@ export class Reservation {
     }
 
     // Getters
-    public getUuid(): string {
+    public getUuid(): string | undefined {
         return this.uuid;
     }
 
@@ -52,7 +52,7 @@ export class Reservation {
         return this.details;
     }
 
-    public getCreatedAt(): Date {
+    public getCreatedAt(): Date | undefined {
         return this.createdAt;
     }
 
@@ -69,6 +69,11 @@ export class Reservation {
     }
 
     // Setters
+    // Setters
+    public setUuid(value: string | undefined): void {
+        this.uuid = value;
+    }
+
     public setStartDate(value: Date): void {
         this.startDate = value;
     }
@@ -84,6 +89,10 @@ export class Reservation {
     public setDetails(value: string | null): void {
         this.details = value;
     }
+
+    public setCreatedAt(value: Date | undefined): void {
+        this.createdAt = value;
+      }
 
     public setSpaceId(value: string): void {
         this.spaceId = value;

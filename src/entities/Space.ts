@@ -55,7 +55,7 @@ export class Space {
     }
 
     // Setters
-    public setUuid(value: string): void {
+    public setUuid(value: string | undefined): void {
         this.uuid = value;
     }
     public setName(value: string): void {
