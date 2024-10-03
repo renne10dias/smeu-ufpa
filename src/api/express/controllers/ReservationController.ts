@@ -21,39 +21,83 @@ export class ReservationController {
 
 
 
-    
 
 
 
     // Método para criar uma reserva
     public async create(request: Request, response: Response): Promise<Response> {
 
+        // Definição do schema de validação usando Joi
         const reservationSchema = Joi.object({
-            startDate: Joi.date().required(),
-            endDate: Joi.date().required(),
-            status: Joi.boolean().required(),
-            details: Joi.string().required(),
-            spaceId: Joi.string().required(),
-            userId: Joi.string().required(),
-            shiftId: Joi.string().required(),
+            startDate: Joi.date().required(),      // startDate deve ser uma data
+            endDate: Joi.date().required(),        // endDate deve ser uma data
+            status: Joi.boolean().required(),      // status deve ser booleano
+            details: Joi.string().required(),      // details deve ser uma string
+            spaceId: Joi.string().required(),      // spaceId deve ser uma string (UUID)
+            userId: Joi.string().required(),       // userId deve ser uma string (UUID)
+            shiftIds: Joi.array().items(Joi.string().uuid()).required()  // shiftIds deve ser um array de strings (UUIDs)
         });
 
+        // Validação do corpo da requisição
         const { error } = reservationSchema.validate(request.body);
         if (error) {
             return response.status(400).json({ error: 'Validation error: ' + error.details[0].message });
         }
 
         try {
-            const { startDate, endDate, status, details, spaceId, userId, shiftId } = request.body;
+            // Extração dos dados da requisição
+            const { startDate, endDate, status, details, spaceId, userId, shiftIds } = request.body;
 
-            const reservation = new Reservation(startDate, endDate, status, details, spaceId, userId, shiftId, undefined, undefined);
+            // Criação da entidade Reservation
+            const reservation = new Reservation(startDate, endDate, status, details, spaceId, userId, shiftIds);
+
+            // Chamada do serviço de criação da reserva
             const output = await this.reservationService.create(reservation);
 
-            return response.status(201).json( output );
+            // Retorna sucesso com o objeto criado
+            return response.status(201).json(output);
 
         } catch (error) {
+            // Tratamento de erros inesperados
             console.error("Error while creating reservation:", error);
             return response.status(500).json({ error: (error as Error).message });
         }
     }
+
+
+    
+    public async getReservationWithShift(request: Request, response: Response): Promise<Response> {
+        try {
+
+            const { reservationUuid } = request.params;
+
+            const output = await this.reservationService.getReservationWithShift(reservationUuid);
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+
+    public async insertShift(request: Request, response: Response): Promise<Response> {
+        try {
+            const { reservationUuid, shiftId, spaceId, userId } = request.body;
+        
+            if (!reservationUuid || !shiftId) {
+                return response.status(400).json({ error: "Reservation UUID and Shift ID are required." });
+            }
+        
+            const output = await this.reservationService.addShiftToReservation(reservationUuid, shiftId, spaceId, userId);
+        
+            // Retorna sucesso com o objeto criado
+            return response.status(201).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+    
+    
+
+
 }

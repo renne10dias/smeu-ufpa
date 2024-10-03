@@ -3,20 +3,20 @@ export class Reservation {
     private startDate: Date;
     private endDate: Date;
     private status: string;
-    private details: string | null;
+    private details: string;
     private createdAt?: Date;
     private spaceId: string;
     private userId: string;
-    private shiftId: string;
+    private shiftIds: string[]; // Adicionando um array para armazenar IDs de turnos
 
     constructor(
         startDate: Date,
         endDate: Date,
         status: string,
-        details: string | null,
+        details: string,
         spaceId: string,
         userId: string,
-        shiftId: string,
+        shiftIds: string[], // Parâmetro para os IDs dos turnos
         uuid?: string,
         createdAt?: Date,
     ) {
@@ -28,7 +28,7 @@ export class Reservation {
         this.createdAt = createdAt;
         this.spaceId = spaceId;
         this.userId = userId;
-        this.shiftId = shiftId;
+        this.shiftIds = shiftIds; // Inicializando o array de shiftIds
     }
 
     // Getters
@@ -48,7 +48,7 @@ export class Reservation {
         return this.status;
     }
 
-    public getDetails(): string | null {
+    public getDetails(): string {
         return this.details;
     }
 
@@ -64,9 +64,11 @@ export class Reservation {
         return this.userId;
     }
 
-    public getShiftId(): string {
-        return this.shiftId;
+    public getShiftIds(): string[] { // Adicionando um getter para shiftIds
+        return this.shiftIds;
     }
+
+
 
     // Setters
     // Setters
@@ -86,7 +88,7 @@ export class Reservation {
         this.status = value;
     }
 
-    public setDetails(value: string | null): void {
+    public setDetails(value: string): void {
         this.details = value;
     }
 
@@ -102,7 +104,4 @@ export class Reservation {
         this.userId = value;
     }
 
-    public setShiftId(value: string): void {
-        this.shiftId = value;
-    }
 }

@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 // npx prisma db push
 
 generator client {
@@ -16,78 +13,94 @@ datasource db {
 }
 
 model User {
-  @@map("tb_users")
-  uuid           String    @id @default(uuid()) @map("uuid")
-  name           String    @map("name")
-  surname        String    @map("surname")
-  email          String    @map("email")
-  passwordHash   String    @map("password_hash")
-  createdAt      DateTime  @map("created_at")
-  activated      Boolean   @map("activated")
-  userTypeId     String    @map("tb_user_types_uuid")
-  userType       UserType  @relation(fields: [userTypeId], references: [uuid])
-  reservations   Reservation[]
+  uuid         String        @id @default(uuid()) @map("uuid")
+  name         String        @map("name")
+  surname      String        @map("surname")
+  email        String        @map("email")
+  passwordHash String        @map("password_hash")
+  createdAt    DateTime      @map("created_at")
+  activated    Boolean       @map("actived") // Corrigido para o campo 'actived'
+  userTypeId   String        @map("tb_user_types_uuid")
+  userType     UserType      @relation(fields: [userTypeId], references: [uuid])
+  reservations Reservation[]
 
   @@index([userTypeId])
+  @@map("tb_users")
 }
 
 model UserType {
-  @@map("tb_user_types")
-  uuid        String  @id @default(uuid()) @map("uuid")
-  typeUser    String  @map("type_user")
-  users       User[]
+  uuid     String @id @default(uuid()) @map("uuid")
+  typeUser String @map("type_user")
+  users    User[]
 
   // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
-}
 
-model Reservation {
-  @@map("tb_reservations")
-  uuid           String       @id @default(uuid()) @map("uuid")
-  startDate      DateTime     @map("start_date")
-  endDate        DateTime     @map("end_date")
-  status         String       @map("status")
-  details        String?      @map("details")
-  createdAt      DateTime     @map("created_at")
-  spaceId        String       @map("tb_spaces_uuid")
-  userId         String       @map("tb_users_uuid")
-  shiftId        String       @map("tb_shift_uuid")
-  user           User         @relation(fields: [userId], references: [uuid])
-  space          Space        @relation(fields: [spaceId], references: [uuid])
-  shift          Shift        @relation(fields: [shiftId], references: [uuid])
-
-  @@index([spaceId])  
-  @@index([userId])
-  @@index([shiftId])
+  @@map("tb_user_types")
 }
 
 model Space {
-  @@map("tb_spaces")
-  uuid             String       @id @default(uuid()) @map("uuid")
-  name             String       @map("name")
-  location         String       @map("location")
-  capacity         Int          @map("capacity")
-  type             String       @map("type")
-  equipment        String?      @map("equipment")
-  activityStatus   Boolean      @map("activity_status")
-  reservations     Reservation[]
-
-  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
-}
-
-model Shift {
-  @@map("tb_shift")
-  uuid           String       @id @default(uuid()) @map("uuid")
-  nameShift      String       @map("name_shift")
+  uuid           String        @id @default(uuid()) @map("uuid")
+  name           String        @map("name")
+  location       String        @map("location")
+  capacity       Int           @map("capacity")
+  type           String        @map("type")
+  equipment      String?       @map("equipment")
+  activityStatus Boolean       @map("activity_status")
   reservations   Reservation[]
 
   // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
+
+  @@map("tb_spaces")
+}
+
+model Shift {
+  uuid         String             @id @default(uuid()) @map("uuid")
+  nameShift    String             @map("name_shift")
+  reservations ReservationShift[] @relation("ShiftReservations") // Relação oposta
+
+  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
+
+  @@map("tb_shift")
+}
+
+model Reservation {
+  uuid      String             @id @default(uuid()) @map("uuid")
+  startDate DateTime           @map("start_date")
+  endDate   DateTime           @map("end_date")
+  status    String             @map("status")
+  details   String?            @map("details")
+  createdAt DateTime           @map("created_at")
+  spaceId   String             @map("tb_spaces_uuid")
+  userId    String             @map("tb_users_uuid")
+  shifts    ReservationShift[] @relation("ReservationShifts") // Relacionamento com ReservationShift
+  user      User               @relation(fields: [userId], references: [uuid])
+  space     Space              @relation(fields: [spaceId], references: [uuid])
+
+  @@unique([uuid, spaceId, userId]) // Adicionado para garantir unicidade
+  @@index([spaceId])
+  @@index([userId])
+  @@map("tb_reservations")
 }
 
 model Notification {
+  uuid     String   @id @default(uuid()) @map("uuid")
+  type     String   @map("type")
+  sendDate DateTime @map("send_date")
+  status   String   @map("status")
+
   @@map("notifications")
-  uuid       String   @id @default(uuid()) @map("uuid")
-  type       String   @map("type")
-  sendDate   DateTime @map("send_date")
-  status     String   @map("status")
 }
 
+model ReservationShift {
+  reservationId String @map("tb_reservations_uuid")
+  spaceId       String @map("tb_reservations_tb_spaces_uuid")
+  userId        String @map("tb_reservations_tb_users_uuid")
+  shiftId       String @map("tb_shift_uuid")
+
+  reservation Reservation @relation(name: "ReservationShifts", fields: [reservationId, spaceId, userId], references: [uuid, spaceId, userId])
+  shift       Shift       @relation(name: "ShiftReservations", fields: [shiftId], references: [uuid])
+
+  @@id([reservationId, spaceId, userId, shiftId])
+  @@index([shiftId])
+  @@map("tb_reservations_has_tb_shift")
+}

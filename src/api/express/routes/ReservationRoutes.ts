@@ -4,6 +4,8 @@ import { ReservationController } from "../controllers/ReservationController";
 export class ReservationRoutes {
     public static registerRoutes(api: ApiExpress) {
         api.addPostRoute("/reservation", ReservationController, 'create');
+        api.addPostRoute("/reservation/create-shift", ReservationController, 'insertShift');
+        api.addGetRoute("/reservation/get-reservation-with-shift/:reservationUuid", ReservationController, 'getReservationWithShift');
     }
 }
 

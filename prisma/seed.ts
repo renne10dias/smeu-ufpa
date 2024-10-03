@@ -71,7 +71,7 @@ class Seed {
 }
 
 const seeder = new Seed();
-seeder.saveTypeUser().catch((e) => {
+seeder.saveShift().catch((e) => {
   console.error(e);
   prisma.$disconnect();
 }).finally(() => {
