@@ -96,6 +96,33 @@ export class ReservationController {
             return response.status(500).json({ error: (error as Error).message });
         }
     }
+
+    public async listAllReservationsWithShifts(request: Request, response: Response): Promise<Response> {
+        try {
+
+
+            const output = await this.reservationService.listAllReservationsWithShifts();
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+
+
+    public async listAllReservations(request: Request, response: Response): Promise<Response> {
+        try {
+
+
+            const output = await this.reservationService.listAllReservations();
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
     
     
 

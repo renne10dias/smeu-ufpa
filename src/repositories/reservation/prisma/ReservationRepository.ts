@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { ReservationRepositoryInterface, getReservationWithShiftRepositoryOutputDto, getReservation_existsOutputDto } from "../ReservationRepositoryInterface";
+import { ReservationRepositoryInterface, getReservationWithShiftRepositoryOutputDto, getReservation_existsOutputDto, getReservationRepositoryOutputDto } from "../ReservationRepositoryInterface";
 import { Reservation } from "../../../entities/Reservation";
 
 // Extende Day.js com os plugins necessários
@@ -127,6 +127,91 @@ export class ReservationRepository implements ReservationRepositoryInterface {
             return false; // Retorna false se ocorrer um erro
         }
     }
+
+
+    // Método para listar todas as reservas com seus turnos associados, incluindo o nome do turno
+    public async listAllReservationsWithShifts(): Promise<getReservationWithShiftRepositoryOutputDto[]> {
+        try {
+            // Busca todas as reservas e inclui os turnos relacionados, juntamente com o nome do turno da tabela Shift
+            const reservations = await this.prisma.reservation.findMany({
+                include: {
+                    shifts: {
+                        include: {
+                            shift: true, // Inclui os dados da tabela Shift
+                        },
+                    },
+                },
+            });
+
+            // Se não houver reservas, retorna um array vazio
+            if (reservations.length === 0) {
+                return [];
+            }
+
+            // Mapeia o resultado para o DTO de saída
+            const result: getReservationWithShiftRepositoryOutputDto[] = reservations.map(reservation => ({
+                uuid: reservation.uuid,
+                startDate: reservation.startDate.toISOString(),
+                endDate: reservation.endDate.toISOString(),
+                status: reservation.status,
+                details: reservation.details || "", // Garante que o campo "details" seja uma string
+                createdAt: reservation.createdAt.toISOString(),
+                spaceId: reservation.spaceId,
+                userId: reservation.userId,
+                shiftId: reservation.shifts.length > 0 ? reservation.shifts[0].shiftId : '', // Pega o primeiro shiftId ou uma string vazia
+                shift: reservation.shifts.map(shift => ({
+                    uuid: shift.shiftId,
+                    nameShift: shift.shift.nameShift, // Inclui o nome do turno da tabela Shift
+                })),
+            }));
+
+            return result; // Retorna o array com as informações das reservas
+        } catch (error) {
+            console.error("Erro ao listar todas as reservas com turnos:", error);
+            throw new Error('Erro ao listar reservas');
+        }
+    }
+
+
+
+    public async listAllReservations(): Promise<getReservationRepositoryOutputDto[]> {
+        try {
+            // Busca todas as reservas e inclui os turnos relacionados, juntamente com o nome do turno da tabela Shift
+            const reservations = await this.prisma.reservation.findMany({
+                include: {
+                    shifts: {
+                        include: {
+                            shift: true, // Inclui os dados da tabela Shift
+                        },
+                    },
+                },
+            });
+
+            // Se não houver reservas, retorna um array vazio
+            if (reservations.length === 0) {
+                return [];
+            }
+
+            // Mapeia o resultado para o DTO de saída
+            const result: getReservationRepositoryOutputDto[] = reservations.map(reservation => ({
+                uuid: reservation.uuid,
+                startDate: reservation.startDate.toISOString(),
+                endDate: reservation.endDate.toISOString(),
+                details: reservation.details || "",
+                shift: reservation.shifts.map(shift => ({
+                    uuid: shift.shiftId,
+                    nameShift: shift.shift.nameShift, // Inclui o nome do turno da tabela Shift
+                })),
+            }));
+
+            return result; // Retorna o array com as informações das reservas
+        } catch (error) {
+            console.error("Erro ao listar todas as reservas com turnos:", error);
+            throw new Error('Erro ao listar reservas');
+        }
+    }
+
+
 
 
 

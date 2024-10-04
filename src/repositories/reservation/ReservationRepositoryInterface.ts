@@ -16,6 +16,17 @@ export type getReservationWithShiftRepositoryOutputDto = {
     }[];
 };
 
+export type getReservationRepositoryOutputDto = {
+    uuid: string,
+    startDate: string,
+    endDate: string,
+    details: string,
+    shift: {
+        uuid: string,
+        nameShift: string
+    }[];
+};
+
 export type getReservation_existsOutputDto = {
     spaceId: string,
     userId: string,
@@ -33,4 +44,6 @@ export interface ReservationRepositoryInterface {
     addShiftToReservation(reservationUuid: string, shiftId: string, spaceId: string, userId: string): Promise<Boolean>;
     //check_reservation(reservation: Reservation): Promise<Boolean>;
     getReservationWithShift(reservationUuid: string): Promise<getReservationWithShiftRepositoryOutputDto[]>;
+    listAllReservationsWithShifts(): Promise<getReservationWithShiftRepositoryOutputDto[]>;
+    listAllReservations(): Promise<getReservationRepositoryOutputDto[]>;
 }

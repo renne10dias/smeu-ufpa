@@ -4,6 +4,11 @@ import { SpaceRepository } from "../../../repositories/spaces/prisma/SpaceReposi
 import { SpaceService } from "../../../services/space/SpaceService";
 import { Space } from "../../../entities/Space";
 
+import { MulterConfig } from "../../../util/multer/MulterConfig"; // Importa a classe do multer
+
+import Joi from 'joi';
+
+
 export class SpaceController {
     private spaceService: SpaceService;
 
@@ -21,14 +26,54 @@ export class SpaceController {
     // Método para criar uma notificação
     public async create(request: Request, response: Response): Promise<Response> {
         try {
-            const { name, location, capacity, type, equipment, activityStatus } = request.body;
+            // Definição do schema de validação usando Joi
+            const reservationSchema = Joi.object({
+                name: Joi.string().required(),
+                location: Joi.string().required(),
+                capacity: Joi.number().integer().required(), // Garante que é um número inteiro
+                type: Joi.string().required(),
+                equipment: Joi.string().required(),
+            });
+    
+            // Validação do corpo da requisição
+            const { error } = reservationSchema.validate(request.body);
+            if (error) {
+                return response.status(400).json({ error: 'Validation error: ' + error.details[0].message });
+            }
+    
+            // Obtém o identificador do arquivo de imagem carregado
+            const imageIdentifier = MulterConfig.getUploadedFilePath(request);
+            if (!imageIdentifier) {
+                return response.status(400).json({ error: 'A imagem é obrigatória.' });
+            }
+            console.log(imageIdentifier);
+    
+            const { name, location, capacity, type, equipment } = request.body;
 
-            // Validação de dados (pode ser feita com uma biblioteca como Joi ou class-validator)
+            // Converte capacidade para inteiro (se necessário)
+            const capacityAsInt = parseInt(capacity, 10);
+    
+            // Criação do espaço com os dados fornecidos
+            const space = new Space(name, location, capacityAsInt, type, undefined, undefined, equipment);
+    
+            // Chama o serviço para salvar o espaço com a imagem associada
+            const output = await this.spaceService.create(space, imageIdentifier);
+    
+            // Retorna a resposta de sucesso
+            return response.status(201).json(output);
+        } catch (error) {
+            // Retorna uma resposta de erro genérica
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
 
-            const space = new Space(name, location, capacity, type, activityStatus, undefined, equipment); // UUID será gerado no serviço
-            const output = await this.spaceService.create(space);
+    public async listSpacesWithFiles(request: Request, response: Response): Promise<Response> {
+        try {
 
-            return response.status(201).json(output); // Status 201 para criação
+            const output = await this.spaceService.listSpacesWithFiles();
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
         } catch (error) {
             return response.status(500).json({ error: (error as Error).message });
         }

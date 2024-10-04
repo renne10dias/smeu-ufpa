@@ -19,7 +19,7 @@ model User {
   email        String        @map("email")
   passwordHash String        @map("password_hash")
   createdAt    DateTime      @map("created_at")
-  activated    Boolean       @map("actived") // Corrigido para o campo 'actived'
+  activated    Boolean       @map("actived")
   userTypeId   String        @map("tb_user_types_uuid")
   userType     UserType      @relation(fields: [userTypeId], references: [uuid])
   reservations Reservation[]
@@ -33,8 +33,6 @@ model UserType {
   typeUser String @map("type_user")
   users    User[]
 
-  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
-
   @@map("tb_user_types")
 }
 
@@ -47,8 +45,7 @@ model Space {
   equipment      String?       @map("equipment")
   activityStatus Boolean       @map("activity_status")
   reservations   Reservation[]
-
-  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
+  files          File[]        @relation("SpaceFiles") // Add this line
 
   @@map("tb_spaces")
 }
@@ -56,9 +53,7 @@ model Space {
 model Shift {
   uuid         String             @id @default(uuid()) @map("uuid")
   nameShift    String             @map("name_shift")
-  reservations ReservationShift[] @relation("ShiftReservations") // Relação oposta
-
-  // Índice para UUID já é implícito pelo campo @id, você pode remover @@index([uuid])
+  reservations ReservationShift[] @relation("ShiftReservations")
 
   @@map("tb_shift")
 }
@@ -72,11 +67,11 @@ model Reservation {
   createdAt DateTime           @map("created_at")
   spaceId   String             @map("tb_spaces_uuid")
   userId    String             @map("tb_users_uuid")
-  shifts    ReservationShift[] @relation("ReservationShifts") // Relacionamento com ReservationShift
+  shifts    ReservationShift[] @relation("ReservationShifts")
   user      User               @relation(fields: [userId], references: [uuid])
   space     Space              @relation(fields: [spaceId], references: [uuid])
 
-  @@unique([uuid, spaceId, userId]) // Adicionado para garantir unicidade
+  @@unique([uuid, spaceId, userId])
   @@index([spaceId])
   @@index([userId])
   @@map("tb_reservations")
@@ -103,4 +98,16 @@ model ReservationShift {
   @@id([reservationId, spaceId, userId, shiftId])
   @@index([shiftId])
   @@map("tb_reservations_has_tb_shift")
+}
+
+model File {
+  uuid       String   @id @default(uuid()) @map("uuid")
+  path       String   @map("path")
+  dateUpload DateTime @map("date_upload")
+  spaceId    String   @map("tb_spaces_uuid")
+  space      Space    @relation("SpaceFiles", fields: [spaceId], references: [uuid]) // Updated relation name
+
+  @@unique([uuid, spaceId])
+  @@index([spaceId])
+  @@map("tb_files")
 }

@@ -129,6 +129,33 @@ export class ReservationService implements ReservationServiceInterface {
         }
     }
 
+    public async listAllReservationsWithShifts() {
+        try {
+            const reservations = await this.repository.listAllReservationsWithShifts();
+
+
+            // Se necessário, você pode realizar mais lógica de negócios aqui
+            return reservations;
+
+        } catch (error) {
+            console.error('Erro ao buscar reserva com turno no serviço:', error);
+            throw new Error('Erro ao buscar reserva no serviço');
+        }
+    }
+
+    public async listAllReservations() {
+        try {
+            const reservations = await this.repository.listAllReservations();
+
+            // Se necessário, você pode realizar mais lógica de negócios aqui
+            return reservations;
+
+        } catch (error) {
+            console.error('Erro ao buscar reserva com turno no serviço:', error);
+            throw new Error('Erro ao buscar reserva no serviço');
+        }
+    }
+
     
 
 

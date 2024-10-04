@@ -35,10 +35,26 @@ export type UpdateInputDto_repository = {
     activityStatus: boolean; 
 };
 
+export type ListSpaceWithFileOutputDto_repository = {
+    uuid: string;
+    name: string;
+    location: string;
+    capacity: number;
+    type: string;
+    equipment: string | null;
+    activityStatus: boolean;
+    files: {
+        uuid: string;
+        path: string;
+        dateUpload: Date;
+    }[]
+};
+
 
 
 export interface SpaceRepositoryInterface {
-    create(space: Space): Promise<void>;
+    create(space: Space, filePath: string): Promise<void>;
+    listSpacesWithFiles(): Promise<ListSpaceWithFileOutputDto_repository[]>;
     find(id: string): Promise<FindOutputDto_repository | null>;
     list(): Promise<ListOutputDto_repository[]>;
     update(spaceDto: UpdateInputDto_repository): Promise<void>;

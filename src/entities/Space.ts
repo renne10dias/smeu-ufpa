@@ -5,14 +5,14 @@ export class Space {
     private capacity: number;
     private type: string;
     private equipment?: string;
-    private activityStatus: boolean;
+    private activityStatus?: boolean;
 
     constructor(
         name: string,
         location: string,
         capacity: number,
         type: string,
-        activityStatus: boolean,
+        activityStatus?: boolean,
         uuid?: string,
         equipment?: string,
     ) {
@@ -50,7 +50,7 @@ export class Space {
         return this.equipment;
     }
 
-    public isActivityStatus(): boolean {
+    public isActivityStatus(): boolean | undefined {
         return this.activityStatus;
     }
 
@@ -78,7 +78,7 @@ export class Space {
         this.equipment = value;
     }
 
-    public setActivityStatus(value: boolean): void {
+    public setActivityStatus(value: boolean | undefined): void {
         this.activityStatus = value;
     }
 }

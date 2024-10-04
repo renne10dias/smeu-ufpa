@@ -39,7 +39,7 @@ export type UpdateInputDto_Service = {
 
 
 export interface SpaceServiceInterface {
-    create(space: Space): Promise<CreateOutputDto_Service>;
+    create(space: Space, filePath: string): Promise<CreateOutputDto_Service>;
     find(id: string): Promise<FindOutputDto_Service | null>;
     list(): Promise<ListOutputDto_Service[]>;
     update(spaceDto: UpdateInputDto_Service): Promise<void>;

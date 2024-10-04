@@ -28,24 +28,24 @@ class Seed {
   }
 
   public async saveShift(): Promise<void> {
-    const users = [
+    const shifts = [
       {
         uuid: "04fd1c01-64aa-4715-afcf-54e6ff0197fe",
-        typeUser: "Manhã",
+        nameShift: "Manhã",
       },
       {
         uuid: "12345678-90ab-cdef-1234-567891abcdef",
-        typeUser: "Tarde",
+        nameShift: "Tarde",
       },
       {
         uuid: "abcdef12-3456-7890-abcd-ef1334567890",
-        typeUser: "Noite",
+        nameShift: "Noite",
       },
     ];
 
-    for (const user of users) {
-      await prisma.userType.create({
-        data: user,
+    for (const shift of shifts) {
+      await prisma.shift.create({
+        data: shift,
       });
     }
   }

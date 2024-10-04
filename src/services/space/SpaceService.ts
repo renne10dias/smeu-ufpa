@@ -37,23 +37,42 @@ export class SpaceService implements SpaceServiceInterface {
 
 
 
-    public async create(space: Space): Promise<CreateOutputDto_Service> {
+    public async create(space: Space, filePath: string): Promise<CreateOutputDto_Service> {
         const uuid = crypto.randomUUID();  // Gera um UUID único
         
         space.setUuid(uuid);
+        space.setActivityStatus(true);
+
+        //console.log(space);
 
         try {
-            await this.repository.create(space);  // Cria a notificação no repositório
+            await this.repository.create(space, uuid);  // Cria a notificação no repositório
             return { 
                 uuid: space.getUuid() as string 
             };  // Retorna o UUID criado
 
+
         } catch (error) {
+            console.error('Erro ao criar espaço:', error);
             throw new Error("Erro ao criar espaço");
         }
     }
 
    
+
+
+    public async listSpacesWithFiles() {
+        try {
+            const reservations = await this.repository.listSpacesWithFiles();
+
+            // Se necessário, você pode realizar mais lógica de negócios aqui
+            return reservations;
+
+        } catch (error) {
+            console.error('Erro ao buscar reserva com turno no serviço:', error);
+            throw new Error('Erro ao buscar reserva no serviço');
+        }
+    }
 
     public async find(uuid: string): Promise<FindOutputDto_Service | null> {
         try {
@@ -74,6 +93,7 @@ export class SpaceService implements SpaceServiceInterface {
             const spaces = await this.repository.list();
             return spaces.map(this.mapToListOutputDto);
         } catch (error) {
+            console.error('Erro:', error);
             throw new Error("Erro ao listar notificações");
         }
     }
@@ -91,6 +111,7 @@ export class SpaceService implements SpaceServiceInterface {
                 activityStatus: spaceDto.activityStatus,
             });
         } catch (error) {
+            console.error('Erro:', error);
             throw new Error("Erro ao atualizar notificação");
         }
     }
@@ -100,6 +121,7 @@ export class SpaceService implements SpaceServiceInterface {
         try {
             await this.repository.delete(uuid);
         } catch (error) {
+            console.error('Erro:', error);
             throw new Error("Erro ao deletar notificação");
         }
     }
