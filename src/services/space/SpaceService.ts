@@ -20,6 +20,9 @@ from "../../services/space/SpaceServiceInterface";
 import { SpaceRepository } from "../../repositories/spaces/prisma/SpaceRepository";
 import crypto from "crypto";  // Importar biblioteca para gerar UUID
 
+import { Request } from 'express';
+
+
 export class SpaceService implements SpaceServiceInterface {
 
     private constructor(readonly repository: SpaceRepository) {}
@@ -46,7 +49,7 @@ export class SpaceService implements SpaceServiceInterface {
         //console.log(space);
 
         try {
-            await this.repository.create(space, uuid);  // Cria a notificação no repositório
+            await this.repository.create(space, filePath);  // Cria a notificação no repositório
             return { 
                 uuid: space.getUuid() as string 
             };  // Retorna o UUID criado
@@ -61,18 +64,69 @@ export class SpaceService implements SpaceServiceInterface {
    
 
 
-    public async listSpacesWithFiles() {
+    public async listSpaces(request: Request) {
         try {
-            const reservations = await this.repository.listSpacesWithFiles();
-
-            // Se necessário, você pode realizar mais lógica de negócios aqui
-            return reservations;
-
+            const spaces = await this.repository.listSpaces();
+    
+            const hostUrl = `${request.protocol}://${request.get('host')}`;
+    
+            // Criamos um novo array onde o path será convertido em uma URL
+            const reservationsWithUrls = spaces.map(space => ({
+                uuid: space.uuid,
+                name: space.name,
+                type: space.type,
+                activityStatus: space.activityStatus,
+                files: space.files.map(file => ({
+                    // Construção da URL completa dinamicamente
+                    path: `${hostUrl}/image/${file.path}`,
+                }))
+            }));
+    
+            return reservationsWithUrls;
+    
         } catch (error) {
-            console.error('Erro ao buscar reserva com turno no serviço:', error);
-            throw new Error('Erro ao buscar reserva no serviço');
+            console.error('Erro ao buscar reservas no serviço:', error);
+            throw new Error('Erro ao buscar reservas no serviço');
         }
     }
+
+    public async findSpace(request: Request, uuid: string) {
+        try {
+            const space = await this.repository.findSpaceById(uuid);
+    
+            if (!space) {
+                return null; // Se o espaço não for encontrado, retornar null
+            }
+    
+            const hostUrl = `${request.protocol}://${request.get('host')}`;
+    
+            // Construção da resposta com URL completa para os arquivos
+            const spaceWithUrls = {
+                uuid: space.uuid,
+                name: space.name,
+                location: space.location,
+                capacity: space.capacity,
+                type: space.type,
+                equipment: space.equipment,
+                files: space.files.map(file => ({
+                    // Construção da URL completa dinamicamente
+                    path: `${hostUrl}/image/${file.path}`,
+                })),
+            };
+    
+            return spaceWithUrls;
+    
+        } catch (error) {
+            console.error('Erro ao buscar espaço no serviço:', error);
+            throw new Error('Erro ao buscar espaço no serviço');
+        }
+    }
+    
+
+    
+    
+    
+
 
     public async find(uuid: string): Promise<FindOutputDto_Service | null> {
         try {

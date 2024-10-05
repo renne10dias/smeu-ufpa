@@ -1,6 +1,7 @@
 import multer, { StorageEngine } from 'multer';
 import path from 'path';
 import { Request } from 'express'; // Importa Request para tipagem
+import crypto from "crypto";  // Importar biblioteca para gerar UUID
 
 export class MulterConfig {
   private static storage: StorageEngine = multer.diskStorage({
@@ -8,8 +9,11 @@ export class MulterConfig {
       cb(null, path.join(__dirname, '../../../uploads')); // Caminho onde as imagens serão salvas
     },
     filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); // Gera nome único
+      // Gera um UUID para nomear a imagem
+      const uniqueSuffix = crypto.randomUUID();
+      // Usa o UUID e a extensão do arquivo original
+      const filename = uniqueSuffix + path.extname(file.originalname);
+      cb(null, filename);
     }
   });
 
@@ -31,11 +35,11 @@ export class MulterConfig {
     });
   }
 
-  // Função estática para retornar o caminho da imagem carregada
-  public static getUploadedFilePath(req: Request): string | null {
+  // Função estática para retornar o nome da imagem carregada
+  public static getUploadedFileName(req: Request): string | null {
     if (req.file) {
-      // Retorna o caminho completo do arquivo
-      return path.join(__dirname, '../../../uploads', req.file.filename);
+      // Retorna o nome da imagem
+      return req.file.filename;
     }
     // Se o arquivo não existir, retorna null
     return null;

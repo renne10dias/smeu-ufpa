@@ -66,12 +66,58 @@ export class ReservationController {
 
 
     
+    public async updateReservationStatus(request: Request, response: Response): Promise<Response> {
+        try {
+
+            const { uuid } = request.params;
+
+            const output = await this.reservationService.updateReservationStatus(uuid);
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+
     public async getReservationWithShift(request: Request, response: Response): Promise<Response> {
         try {
 
             const { reservationUuid } = request.params;
 
             const output = await this.reservationService.getReservationWithShift(reservationUuid);
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+
+
+    public async getAllReservations(request: Request, response: Response): Promise<Response> {
+        try {
+
+            const { uuid } = request.params;
+
+            const output = await this.reservationService.getAllReservations();
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+
+
+
+
+    public async getReservationDetailsByUuid(request: Request, response: Response): Promise<Response> {
+        try {
+
+            const { uuid } = request.params;
+
+            const output = await this.reservationService.getReservationDetailsByUuid(request, uuid);
 
             // Retorna a resposta com status 200 (OK) e os dados formatados
             return response.status(200).json(output);

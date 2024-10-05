@@ -42,15 +42,18 @@ export class SpaceController {
             }
     
             // Obtém o identificador do arquivo de imagem carregado
-            const imageIdentifier = MulterConfig.getUploadedFilePath(request);
+            const imageIdentifier = MulterConfig.getUploadedFileName(request);
+    
             if (!imageIdentifier) {
                 return response.status(400).json({ error: 'A imagem é obrigatória.' });
             }
-            console.log(imageIdentifier);
+    
+            // Para monitorar o nome da imagem no servidor
+            //console.log('Identificador da imagem:', imageIdentifier);
     
             const { name, location, capacity, type, equipment } = request.body;
-
-            // Converte capacidade para inteiro (se necessário)
+    
+            // Converte capacidade para inteiro
             const capacityAsInt = parseInt(capacity, 10);
     
             // Criação do espaço com os dados fornecidos
@@ -63,14 +66,32 @@ export class SpaceController {
             return response.status(201).json(output);
         } catch (error) {
             // Retorna uma resposta de erro genérica
+            console.error('Erro na criação da reserva:', error);
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+    
+
+
+
+    public async listSpaces(request: Request, response: Response): Promise<Response> {
+        try {
+
+            const output = await this.spaceService.listSpaces(request);
+
+            // Retorna a resposta com status 200 (OK) e os dados formatados
+            return response.status(200).json(output);
+        } catch (error) {
             return response.status(500).json({ error: (error as Error).message });
         }
     }
 
-    public async listSpacesWithFiles(request: Request, response: Response): Promise<Response> {
+    public async findSpace(request: Request, response: Response): Promise<Response> {
         try {
 
-            const output = await this.spaceService.listSpacesWithFiles();
+            const { id } = request.params;
+
+            const output = await this.spaceService.findSpace(request, id);
 
             // Retorna a resposta com status 200 (OK) e os dados formatados
             return response.status(200).json(output);

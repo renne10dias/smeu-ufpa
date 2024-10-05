@@ -7,7 +7,8 @@ export class SpaceRoutes {
         const upload = MulterConfig.getMulterInstance(); // Instância do multer
 
         api.addPostRoute("/spaces", SpaceController, 'create', upload.single('file'));
-        api.addGetRoute("/spaces", SpaceController, 'listSpacesWithFiles');
+        api.addGetRoute("/spaces", SpaceController, 'listSpaces');
+        api.addGetRoute("/spaces/find/detalhes/:id", SpaceController, 'findSpace');
         api.addGetRoute("/spaces/:id", SpaceController, 'find');
         api.addPutRoute("/spaces/:id", SpaceController, 'update');
         api.addDeleteRoute("/spaces/:id", SpaceController, 'delete');

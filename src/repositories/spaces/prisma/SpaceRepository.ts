@@ -4,7 +4,9 @@ import {
     ListOutputDto_repository,
     SpaceRepositoryInterface,
     UpdateInputDto_repository,
-    ListSpaceWithFileOutputDto_repository
+    ListSpaceWithFileOutputDto_repository,
+    ListSpaceWithFileAllOutputDto_repository,
+    FindSpaceOutputDto_repository
 } 
 from "../SpaceRepositoryInterface";
 import { Space } from "../../../entities/Space";
@@ -59,7 +61,7 @@ export class SpaceRepository implements SpaceRepositoryInterface {
 
 
     // Listar espaços com os dados dos arquivos
-    public async listSpacesWithFiles(): Promise<ListSpaceWithFileOutputDto_repository[]> {
+    public async listSpacesWithFilesAll(): Promise<ListSpaceWithFileAllOutputDto_repository[]> {
         try {
             const spaces = await this.prisma.space.findMany({
                 include: {
@@ -80,6 +82,32 @@ export class SpaceRepository implements SpaceRepositoryInterface {
                     uuid: file.uuid,
                     path: file.path,
                     dateUpload: file.dateUpload,
+                }))
+            }));
+        } catch (error) {
+            console.error("Erro ao listar espaços com arquivos - repository", error);
+            throw new Error("Erro ao listar espaços com arquivos - repository");
+        }
+    }
+
+
+    // Listar espaços com os dados dos arquivos
+    public async listSpaces(): Promise<ListSpaceWithFileOutputDto_repository[]> {
+        try {
+            const spaces = await this.prisma.space.findMany({
+                include: {
+                    files: true, // Incluir arquivos relacionados ao espaço
+                }
+            });
+
+            // Mapear os dados de saída para o DTO de retorno
+            return spaces.map(space => ({
+                uuid: space.uuid,
+                name: space.name,
+                type: space.type,
+                activityStatus: space.activityStatus,
+                files: space.files.map(file => ({
+                    path: file.path,
                 }))
             }));
         } catch (error) {
@@ -110,6 +138,38 @@ export class SpaceRepository implements SpaceRepositoryInterface {
         } catch (error) {
             console.error('Erro:', error);
             throw new Error("Erro ao buscar espaço - repository");
+        }
+    }
+
+     // Buscar espaço com os dados dos arquivos pelo UUID
+     public async findSpaceById(uuid: string): Promise<FindSpaceOutputDto_repository | null> {
+        try {
+            const space = await this.prisma.space.findUnique({
+                where: { uuid },
+                include: {
+                    files: true, // Incluir arquivos relacionados ao espaço
+                },
+            });
+
+            if (!space) {
+                return null; // Se o espaço não for encontrado, retornar null
+            }
+
+            // Mapear os dados de saída para o DTO de retorno
+            return {
+                uuid: space.uuid,
+                name: space.name,
+                location: space.location,
+                capacity: space.capacity,
+                type: space.type,
+                equipment: space.equipment,
+                files: space.files.map(file => ({
+                    path: file.path,
+                })),
+            };
+        } catch (error) {
+            console.error("Erro ao buscar espaço por ID - repository", error);
+            throw new Error("Erro ao buscar espaço por ID - repository");
         }
     }
 

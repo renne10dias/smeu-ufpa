@@ -26,5 +26,6 @@ export type ListServiceOutputDto_service = {
 
 export interface ReservationServiceInterface {
     create(reservation: Reservation): Promise<CreateOutputDto_service>;
+    updateReservationStatus(uuid: string): Promise<CreateOutputDto_service>;
 }
   

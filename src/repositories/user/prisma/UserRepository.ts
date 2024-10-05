@@ -38,6 +38,7 @@ export class UserRepository implements UserRepositoryInterface {
             },
         });
     } catch (error) {
+        console.error("Error while creating reservation:", error);
         throw new Error("Erro ao criar notificação");
     }
     }

@@ -6,6 +6,15 @@ export class ReservationRoutes {
         api.addPostRoute("/reservation", ReservationController, 'create');
         api.addPostRoute("/reservation/create-shift", ReservationController, 'insertShift');
         api.addGetRoute("/reservation/get-reservation-with-shift/:reservationUuid", ReservationController, 'getReservationWithShift');
+
+        // reservas
+        api.addGetRoute("/reservation/get-reservation/:uuid", ReservationController, 'getReservationDetailsByUuid');
+        api.addGetRoute("/reservation/get-all", ReservationController, 'getAllReservations');
+        api.addGetRoute("/reservation/confirm-reservation/:uuid", ReservationController, 'updateReservationStatus');
+
+        
+
+
         api.addGetRoute("/reservation/list-all-reservations-with-shifts", ReservationController, 'listAllReservationsWithShifts');
         api.addGetRoute("/reservation/list-all-reservations", ReservationController, 'listAllReservations');
     }

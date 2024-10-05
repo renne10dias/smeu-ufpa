@@ -2,7 +2,15 @@ import { PrismaClient } from "@prisma/client";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { ReservationRepositoryInterface, getReservationWithShiftRepositoryOutputDto, getReservation_existsOutputDto, getReservationRepositoryOutputDto } from "../ReservationRepositoryInterface";
+import { ReservationRepositoryInterface, 
+         getReservationWithShiftRepositoryOutputDto, 
+         getReservation_existsOutputDto, 
+         getReservationRepositoryOutputDto,
+         getReservationDetails,
+         getReservationOutput 
+        } from "../ReservationRepositoryInterface";
+
+
 import { Reservation } from "../../../entities/Reservation";
 
 // Extende Day.js com os plugins necessários
@@ -56,6 +64,132 @@ export class ReservationRepository implements ReservationRepositoryInterface {
             return false; // Retorna false se ocorrer um erro
         }
     }
+
+    public async updateReservationStatus(uuid: string): Promise<boolean> {
+        try {
+
+            const newStatus = "true";
+            // Update the reservation status in the database
+            await this.prisma.reservation.update({
+                where: {
+                    uuid: uuid, // Find the reservation by UUID
+                },
+                data: {
+                    status: newStatus, // Update the status
+                },
+            });
+            
+            return true; // Return true if the update is successful
+        } catch (error) {
+            console.error('Error updating reservation status:', error);
+            throw new Error('Error updating reservation status');
+        }
+    }
+    
+
+
+    public async getReservationDetailsByUuid(uuid: string): Promise<getReservationDetails | null> {
+        try {
+            const reservation = await this.prisma.reservation.findUnique({
+                where: {
+                    uuid: uuid, // Search by reservation UUID
+                },
+                include: {
+                    shifts: {
+                        include: {
+                            shift: true, // Include shift details
+                        },
+                    },
+                    user: true, // Include user details
+                    space: {
+                        include: {
+                            files: true, // Include space's files
+                        },
+                    },
+                },
+            });
+    
+            if (!reservation) {
+                return null; // Return null if no reservation is found
+            }
+    
+            // Map the result to match `getReservationDetails` structure
+            return {
+                uuid: reservation.uuid,
+                startDate: reservation.startDate.toISOString(),
+                endDate: reservation.endDate.toISOString(),
+                status: reservation.status,
+                details: reservation.details ?? '', // Handle nullable field
+                createdAt: reservation.createdAt.toISOString(),
+                shift: {
+                    uuid: reservation.shifts[0].shift.uuid, // Assuming each reservation has one shift
+                    nameShift: reservation.shifts[0].shift.nameShift,
+                },
+                user: {
+                    uuid: reservation.user.uuid,
+                    name: reservation.user.name,
+                    email: reservation.user.email,
+                },
+                space: {
+                    uuid: reservation.space.uuid,
+                    name: reservation.space.name,
+                    files: reservation.space.files.map((file) => ({
+                        path: file.path, // Get the path from each file
+                    })),
+                },
+            };
+        } catch (error) {
+            console.error('Error fetching reservation by UUID:', error);
+            throw new Error('Error fetching reservation by UUID');
+        }
+    }
+
+    public async getAllReservations(): Promise<getReservationOutput[]> {
+        try {
+            const reservations = await this.prisma.reservation.findMany({
+                include: {
+                    shifts: {
+                        include: {
+                            shift: true, // Include shift details
+                        },
+                    },
+                    user: {
+                        include: {
+                            userType: true, // Include UserType details
+                        },
+                    },
+                    space: true, // Include space details
+                },
+            });
+    
+            // Map the result to match `getReservationOutput` structure
+            return reservations.map(reservation => ({
+                uuid: reservation.uuid,
+                status: reservation.status,
+                createdAt: reservation.createdAt.toISOString(),
+                user: {
+                    name: reservation.user.name,
+                    role: reservation.user.userType.typeUser || '', // Include user role, handle case where it may be null
+                },
+                space: {
+                    name: reservation.space.name,
+                },
+            }));
+        } catch (error) {
+            console.error('Error listing reservations:', error);
+            throw new Error('Error listing reservations');
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+
+
 
     // Método para buscar uma reserva com seus turnos associados
     public async getReservationWithShift(reservationUuid: string): Promise<getReservationWithShiftRepositoryOutputDto[]> {
@@ -198,6 +332,7 @@ export class ReservationRepository implements ReservationRepositoryInterface {
                 startDate: reservation.startDate.toISOString(),
                 endDate: reservation.endDate.toISOString(),
                 details: reservation.details || "",
+                status: reservation.status,
                 shift: reservation.shifts.map(shift => ({
                     uuid: shift.shiftId,
                     nameShift: shift.shift.nameShift, // Inclui o nome do turno da tabela Shift
