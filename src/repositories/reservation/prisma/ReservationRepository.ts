@@ -29,7 +29,16 @@ export class ReservationRepository implements ReservationRepositoryInterface {
     // Método para criar uma reserva e associar turnos
     public async create(reservation: Reservation): Promise<Boolean> {
         try {
-            const createdAt = dayjs().utc().toDate(); // Data atual em UTC
+            // Convertendo as datas recebidas para UTC
+            //const startDateUTC = dayjs(reservation.getStartDate()).utc().toDate();
+            //const endDateUTC = dayjs(reservation.getEndDate()).utc().toDate();
+
+            // Converte as datas em UTC, garantindo precisão nos fusos horários
+            //const start = dayjs.utc(reservation.getStartDate()).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
+            //const end = dayjs.utc(reservation.getEndDate()).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
+
+            const createdAtUTC = dayjs(reservation.getCreatedAt()).utc().toDate();
+            
 
             // Executar todas as operações dentro de uma transação
             await this.prisma.$transaction(async (prisma) => {
@@ -41,7 +50,7 @@ export class ReservationRepository implements ReservationRepositoryInterface {
                         endDate: reservation.getEndDate(),
                         status: reservation.getStatus(),
                         details: reservation.getDetails(),
-                        createdAt: createdAt,
+                        createdAt: createdAtUTC,
                         spaceId: reservation.getSpaceId(),
                         userId: reservation.getUserId(),
                     },
@@ -64,6 +73,45 @@ export class ReservationRepository implements ReservationRepositoryInterface {
             return false; // Retorna false se ocorrer um erro
         }
     }
+
+
+    // Método para verificar se o turno já existe para uma data específica (ou intervalo de datas)
+    public async checkShiftAvailability(startDate: Date, endDate: Date, shiftId: string): Promise<Boolean> {
+        try {
+            // Converte as datas em UTC, garantindo precisão nos fusos horários
+            const start = dayjs.utc(startDate).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
+            const end = dayjs.utc(endDate).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
+
+            // Verifica se há algum turno reservado dentro do intervalo de datas
+            const existingReservation = await this.prisma.reservationShift.findFirst({
+                where: {
+                    shiftId: shiftId,
+                    reservation: {
+                        OR: [
+                            {
+                                startDate: {
+                                    lte: end, // A data inicial da reserva é antes ou igual à data final do intervalo
+                                },
+                                endDate: {
+                                    gte: start, // A data final da reserva é depois ou igual à data inicial do intervalo
+                                },
+                            },
+                        ],
+                    },
+                },
+            });
+
+            // Retorna false se o turno já estiver reservado, e true se estiver disponível
+            return existingReservation ? false : true; 
+
+        } catch (error) {
+            console.error("Erro ao verificar disponibilidade de turno:", error);
+            throw new Error('Erro ao verificar disponibilidade de turno');
+        }
+    }
+
+
+
 
     public async updateReservationStatus(uuid: string): Promise<boolean> {
         try {
@@ -320,17 +368,18 @@ export class ReservationRepository implements ReservationRepositoryInterface {
                     },
                 },
             });
-
+    
             // Se não houver reservas, retorna um array vazio
             if (reservations.length === 0) {
                 return [];
             }
-
+    
             // Mapeia o resultado para o DTO de saída
             const result: getReservationRepositoryOutputDto[] = reservations.map(reservation => ({
                 uuid: reservation.uuid,
-                startDate: reservation.startDate.toISOString(),
-                endDate: reservation.endDate.toISOString(),
+                // Converte as datas para o fuso horário de São Paulo
+                startDate: reservation.startDate,
+                endDate: reservation.endDate,
                 details: reservation.details || "",
                 status: reservation.status,
                 shift: reservation.shifts.map(shift => ({
@@ -338,7 +387,7 @@ export class ReservationRepository implements ReservationRepositoryInterface {
                     nameShift: shift.shift.nameShift, // Inclui o nome do turno da tabela Shift
                 })),
             }));
-
+    
             return result; // Retorna o array com as informações das reservas
         } catch (error) {
             console.error("Erro ao listar todas as reservas com turnos:", error);

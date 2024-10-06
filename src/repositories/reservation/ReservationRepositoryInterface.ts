@@ -18,8 +18,8 @@ export type getReservationWithShiftRepositoryOutputDto = {
 
 export type getReservationRepositoryOutputDto = {
     uuid: string,
-    startDate: string,
-    endDate: string,
+    startDate: Date,
+    endDate: Date,
     details: string,
     status: string,
     shift: {
@@ -89,7 +89,8 @@ export interface ReservationRepositoryInterface {
     getAllReservations(): Promise<getReservationOutput[] | null>;
     getReservationDetailsByUuid(uuid: string): Promise<getReservationDetails | null>;
 
-    //check_reservation(reservation: Reservation): Promise<Boolean>;
+    checkShiftAvailability(startDate: Date, endDate: Date, shiftId: string): Promise<Boolean>;
+    
     getReservationWithShift(reservationUuid: string): Promise<getReservationWithShiftRepositoryOutputDto[]>;
     listAllReservationsWithShifts(): Promise<getReservationWithShiftRepositoryOutputDto[]>;
     listAllReservations(): Promise<getReservationRepositoryOutputDto[]>;

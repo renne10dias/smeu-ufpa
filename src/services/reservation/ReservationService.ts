@@ -24,29 +24,37 @@ export class ReservationService implements ReservationServiceInterface {
 
 
     public async create(reservation: Reservation): Promise<CreateOutputDto_service> {
-        const uuid = crypto.randomUUID();  // Generate a unique UUID
+        const uuid = crypto.randomUUID();  // Gera um UUID único
         reservation.setUuid(uuid);
         
         try {
-
-            const result = await this.repository.create(reservation);  // Create reservation in the repository
+            // Verifica a disponibilidade de turno para cada turno solicitado no intervalo de datas
+            for (const shiftId of reservation.getShiftIds()) {
+                const isAvailable = await this.repository.checkShiftAvailability(reservation.getStartDate(), reservation.getEndDate(), shiftId);
+                if (!isAvailable) {
+                    throw new Error(`Turno ${shiftId} já está reservado para o intervalo de datas fornecido.`);
+                }
+            }
+    
+            // Tenta criar a reserva no repositório
+            const result = await this.repository.create(reservation);
             if (result) {
                 return {
                     message: "Reserva criada com sucesso"
                 };
             } else {
                 return {
-                    message: "Alguma merda aconteceu"
+                    message: "Falha ao criar a reserva"
                 };
             }
-           
-                
-
+    
         } catch (error) {
-            console.error("Error while creating reservation:", error);
-            throw new Error("Error while creating reservation");
+            console.error("Erro ao criar a reserva:", error);
+            throw new Error("Erro ao criar a reserva, tente novamente mais tarde.");
         }
     }
+    
+    
 
     public async updateReservationStatus(uuid: string): Promise<CreateOutputDto_service> {
         try {

@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 class Seed {
-
   public async saveTypeUser(): Promise<void> {
     const users = [
       {
@@ -50,30 +49,35 @@ class Seed {
     }
   }
 
-  public  async seedUserAdmin() {
+  public async seedUserAdmin() {
     await prisma.user.create({
-        data: {
-            uuid: '04fd1c01-64aa-4715-afcf-54e6ff0196fe',
-            name: 'Renne',
-            surname: 'Farias Dias',
-            email: 'rennedias@gmail.com',
-            passwordHash: "123",
-            activated: true,
-            createdAt: new Date,
-            userTypeId: "04fd1c01-64aa-4715-afcf-54e6ff0196fe"
-        }
-    })
-}
-
-
-
-
+      data: {
+        uuid: '04fd1c01-64aa-4715-afcf-58e6ff0196fe',
+        name: 'Renne',
+        surname: 'Farias Dias',
+        email: 'rennedias@gmail.com',
+        passwordHash: "123",
+        activated: true,
+        createdAt: new Date(),
+        userTypeId: "04fd1c01-64aa-4715-afcf-54e6ff0196fe"
+      }
+    });
+  }
 }
 
 const seeder = new Seed();
-seeder.saveShift().catch((e) => {
-  console.error(e);
-  prisma.$disconnect();
-}).finally(() => {
-  prisma.$disconnect();
-});
+
+async function runSeeding() {
+  try {
+    await seeder.saveTypeUser();
+    await seeder.saveShift();
+    await seeder.seedUserAdmin();
+    console.log("Seeding completed successfully.");
+  } catch (e) {
+    console.error("Error during seeding:", e);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+runSeeding();
