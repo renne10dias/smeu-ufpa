@@ -43,9 +43,9 @@ $(document).ready(function() {
 
           return {
             title: `Reserva: ${event.details}, Turno: ${shift.nameShift}`,
-            start: new Date(event.startDate),
-            end: new Date(event.endDate),
-            allDay: true, // Make the event an all-day event to remove time display
+            start: new Date(event.startDate).toISOString(), // Corrigido para obter ISO
+            end: new Date(event.endDate).toISOString(), // Corrigido para obter ISO
+            allDay: true, // Torna o evento um evento de dia inteiro
             className: eventClass
           };
         });
