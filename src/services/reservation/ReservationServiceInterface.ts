@@ -1,6 +1,10 @@
 import { Reservation } from "../../entities/Reservation";
 
 export type CreateOutputDto_service = {
+    httpCode: number;
+};
+
+export type UpdateOutputDto_service = {
     message: string;
 };
 
@@ -26,6 +30,6 @@ export type ListServiceOutputDto_service = {
 
 export interface ReservationServiceInterface {
     create(reservation: Reservation): Promise<CreateOutputDto_service>;
-    updateReservationStatus(uuid: string): Promise<CreateOutputDto_service>;
+    updateReservationStatus(uuid: string): Promise<UpdateOutputDto_service>;
 }
   

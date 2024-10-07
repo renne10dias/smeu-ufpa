@@ -2,7 +2,9 @@ import { Reservation } from "../../entities/Reservation";
 import { ReservationRepositoryInterface } from "../../repositories/reservation/ReservationRepositoryInterface";
 import { ReservationRepository } from "../../repositories/reservation/prisma/ReservationRepository";
 import crypto from "crypto";  // For UUID generation
-import { CreateOutputDto_service, ReservationServiceInterface } from "../../services/reservation/ReservationServiceInterface";
+import { CreateOutputDto_service, 
+        ReservationServiceInterface,
+        UpdateOutputDto_service } from "../../services/reservation/ReservationServiceInterface";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -32,7 +34,10 @@ export class ReservationService implements ReservationServiceInterface {
             for (const shiftId of reservation.getShiftIds()) {
                 const isAvailable = await this.repository.checkShiftAvailability(reservation.getStartDate(), reservation.getEndDate(), shiftId);
                 if (!isAvailable) {
-                    throw new Error(`Turno ${shiftId} já está reservado para o intervalo de datas fornecido.`);
+                    //throw new Error(`Turno ${shiftId} já está reservado para o intervalo de datas fornecido.`);
+                    return {
+                        httpCode: 404
+                    };
                 }
             }
     
@@ -40,11 +45,11 @@ export class ReservationService implements ReservationServiceInterface {
             const result = await this.repository.create(reservation);
             if (result) {
                 return {
-                    message: "Reserva criada com sucesso"
+                    httpCode: 201
                 };
             } else {
                 return {
-                    message: "Falha ao criar a reserva"
+                    httpCode: 500
                 };
             }
     
@@ -56,7 +61,7 @@ export class ReservationService implements ReservationServiceInterface {
     
     
 
-    public async updateReservationStatus(uuid: string): Promise<CreateOutputDto_service> {
+    public async updateReservationStatus(uuid: string): Promise<UpdateOutputDto_service> {
         try {
 
             const result = await this.repository.updateReservationStatus(uuid);  // Create reservation in the repository

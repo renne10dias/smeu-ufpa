@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Modernize Free</title>
-  <link rel="shortcut icon" type="image/png" href="../../../assets/images/logos/favicon.png" />
+  <title>Espaços</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../../../assets/css/styles.min.css" />
 </head>
 
@@ -68,7 +68,7 @@
             </li>
 
             <li class="sidebar-item">
-              <a class="sidebar-link" href="list_reservas.html" aria-expanded="false">
+              <a class="sidebar-link" href="../reservas/list_reservas.html" aria-expanded="false">
                 <span>
                   <i class="ti ti ti-article"></i>
                 </span>
@@ -77,7 +77,7 @@
             </li>
 
             <li class="sidebar-item">
-              <a class="sidebar-link" href="../reservas/criar_reserva.html" aria-expanded="false">
+              <a class="sidebar-link" href="../reservas/listar_espacos_para_reserva.html" aria-expanded="false">
                 <span>
                   <i class="ti ti ti-article"></i>
                 </span>
@@ -123,7 +123,7 @@
           </ul>
           <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-              <a href="https://adminmart.com/product/modernize-free-bootstrap-admin-dashboard/" target="_blank" class="btn btn-primary">Download Free</a>
+              <a href="criar_espaco.html" class="btn btn-primary">Adicionar Espaço</a>
               <li class="nav-item dropdown">
                 <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
                   aria-expanded="false">
@@ -153,53 +153,20 @@
       </header>
       <!--  Header End -->
       <div class="container-fluid">
-        <div class="container-fluid">
-          <div class="card">
-            <div class="card-body">
-
-              <div id="detalhesReserva" class="row">
-                <div class="col-md-4">
-                    <h5 class="card-title fw-semibold mb-4">Espaço</h5>
-                    <div class="card">
-                        <img id="spaceImage" src="" class="card-img-top" alt="Espaço">
-                        <div class="card-body">
-                            <h5 id="spaceName" class="card-title"></h5>
-                            <p id="spaceDetails" class="card-text"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <h5 class="card-title fw-semibold mb-4">Reserva</h5>
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 id="reservationTitle" class="card-title"></h5>
-                            <p id="reservationStart" class="card-text"></p>
-                            <p id="reservationEnd" class="card-text"></p>
-                            <p id="reservationStatus" class="card-text"></p>
-                            <p id="reservationShift" class="card-text"></p>
-                            <a href="#" class="btn btn-primary" id="confirmReservationButton" style="display: none;">Confirmar Reserva</a> <!-- Hidden by default -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <h5 class="card-title fw-semibold mb-4">Usuário</h5>
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 id="userName" class="card-title"></h5>
-                            <p id="userEmail" class="card-text"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!--  Row 1 -->
 
 
-
-
-            </div>
-          </div>
+        <div id="spacesContainer" class="row">
+            <!-- Cards will be dynamically added here -->
         </div>
+
+
+
+      </div>
+
+
+      <div class="py-6 px-6 text-center">
+          <p class="mb-0 fs-4">Developed by <a href="#" target="_blank" class="pe-1 text-primary text-decoration-underline">projetosdiasdev.com</a></p>
       </div>
     </div>
   </div>
@@ -207,10 +174,11 @@
   <script src="../../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../../../assets/js/sidebarmenu.js"></script>
   <script src="../../../assets/js/app.min.js"></script>
+  <script src="../../../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
   <script src="../../../assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="../../../assets/js/dashboard.js"></script>
 
-  <script src="detalhes-reserva-api.js"></script>
-
+  <script src="list-espacos-api.js"></script>
 </body>
 
 </html>

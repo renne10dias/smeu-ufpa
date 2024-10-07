@@ -52,7 +52,20 @@ export class ReservationController {
             const reservation = new Reservation(startDate, endDate, status, details, spaceId, userId, shiftIds);
 
             // Chamada do serviço de criação da reserva
+            // Chamada do serviço de criação da reserva
             const output = await this.reservationService.create(reservation);
+
+            switch (output['httpCode']) {
+                case 201:
+                    return response.status(201).json({ message: "Reserva criada com sucesso." });
+                case 404:
+                    return response.status(404).json({ message: "Turno selecionado já está reservado para o intervalo de datas fornecido." });
+                case 500:
+                    return response.status(500).json({ message: "Falha ao criar reserva." });
+                default:
+                    return response.status(400).json({ message: "Erro inesperado. Por favor, tente novamente." });
+            }
+
 
             // Retorna sucesso com o objeto criado
             return response.status(201).json(output);

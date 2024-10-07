@@ -21,7 +21,9 @@ $(document).ready(function() {
         const endDate = new Date($('#kt_calendar_datepicker_end_date').val()).toISOString(); // Converte para ISO
 
         // Define os IDs de espaço e usuário (substitua por seus próprios valores)
-        const spaceId = 'a903226e-03f3-4a46-b244-4958fadde119'; // Exemplo de ID de espaço
+        // Use the function to get the UUID from the URL
+        const spaceUUID = getQueryParam('uuid-reserva');
+        //const spaceId = 'a903226e-03f3-4a46-b244-4958fadde119'; // Exemplo de ID de espaço
         const userId = '04fd1c01-64aa-4715-afcf-58e6ff0196fe'; // Exemplo de ID de usuário
 
         // Cria o objeto de dados da reserva
@@ -30,7 +32,7 @@ $(document).ready(function() {
             endDate: endDate,
             status: "false", // Você pode definir a lógica para o status aqui
             details: eventName,
-            spaceId: spaceId,
+            spaceId: spaceUUID,
             userId: userId,
             shiftIds: selectedShifts // Adiciona os turnos selecionados (IDs)
         };
@@ -38,7 +40,6 @@ $(document).ready(function() {
         // Mostra os dados da reserva em formato JSON para depuração
         console.log('JSON da Reserva:', JSON.stringify(reservationData, null, 2));
 
-        // Aqui, você pode fazer uma chamada para o seu endpoint
         fetch('http://localhost:8000/reservation', { // Ajuste para seu endpoint de criação
             method: 'POST',
             headers: {
@@ -47,20 +48,32 @@ $(document).ready(function() {
             body: JSON.stringify(reservationData),
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Success:', data);
-            alert('Reserva criada com sucesso!'); // Mostra alerta de sucesso
-            location.reload(); // Recarrega a página
+            return response.json().then(data => {
+                if (!response.ok) {
+                    // Verifica os códigos de status HTTP para dar feedback mais específico
+                    switch (response.status) {
+                        case 404:
+                            alert(data.message); // Mostra alerta de erro específico
+                            break;
+                        case 500:
+                            alert(data.message); // Mostra alerta de erro do servidor
+                            break;
+                        default:
+                            throw new Error('Ocorreu um erro inesperado. Tente novamente.');
+                    }
+                } else {
+                    alert(data.message); // Mostra a mensagem de sucesso
+                    location.reload(); // Recarrega a página após sucesso
+                }
+                return data; // Retorna os dados para outro tratamento se necessário
+            });
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('Erro ao criar a reserva. Tente novamente.'); // Mostra alerta de erro
+            alert(error.message); // Mostra alerta de erro personalizado
         });
+        
+        
 
         // Fecha o modal após a submissão
         $('#dateRangeModal').modal('hide');
@@ -79,6 +92,12 @@ $(document).ready(function() {
             console.error('Error fetching events:', error);
             return []; // Retorna um array vazio se houver um erro
         }
+    }
+
+    // Function to get the query parameter by name
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
     }
 
     // Inicializa o FullCalendar

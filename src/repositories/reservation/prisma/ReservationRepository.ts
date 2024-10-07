@@ -79,8 +79,8 @@ export class ReservationRepository implements ReservationRepositoryInterface {
     public async checkShiftAvailability(startDate: Date, endDate: Date, shiftId: string): Promise<Boolean> {
         try {
             // Converte as datas em UTC, garantindo precisão nos fusos horários
-            const start = dayjs.utc(startDate).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
-            const end = dayjs.utc(endDate).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
+            //const start = dayjs.utc(startDate).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
+            //const end = dayjs.utc(endDate).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ');
 
             // Verifica se há algum turno reservado dentro do intervalo de datas
             const existingReservation = await this.prisma.reservationShift.findFirst({
@@ -90,10 +90,10 @@ export class ReservationRepository implements ReservationRepositoryInterface {
                         OR: [
                             {
                                 startDate: {
-                                    lte: end, // A data inicial da reserva é antes ou igual à data final do intervalo
+                                    lte: endDate, // A data inicial da reserva é antes ou igual à data final do intervalo
                                 },
                                 endDate: {
-                                    gte: start, // A data final da reserva é depois ou igual à data inicial do intervalo
+                                    gte: startDate, // A data final da reserva é depois ou igual à data inicial do intervalo
                                 },
                             },
                         ],
