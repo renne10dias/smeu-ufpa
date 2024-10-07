@@ -69,7 +69,7 @@ export class ReservationRepository implements ReservationRepositoryInterface {
 
             return true; // Retorna true se a criação for bem-sucedida
         } catch (error) {
-            console.error("Error while creating reservation:", error);
+            console.error("Error while creating reservation:", error);    
             return false; // Retorna false se ocorrer um erro
         }
     }
