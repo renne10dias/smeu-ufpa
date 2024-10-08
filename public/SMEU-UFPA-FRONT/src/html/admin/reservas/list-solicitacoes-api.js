@@ -1,10 +1,25 @@
 // Function to fetch reservations from the API
 async function fetchReservations() {
     try {
-        const response = await fetch('http://localhost:8000/reservation/get-all'); // Replace with your API endpoint
+        const token = sessionStorage.getItem('token'); // Retrieve the token from session storage
+        const response = await fetch('http://localhost:8000/reservation/get-all', {
+            method: 'GET',
+            headers: {
+                'Authorization': `${token}`, // Add the token to the headers
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Check for 403 Forbidden status
+        if (response.status === 403) {
+            window.location.href = '../../login/index.html'; // Redirect to the login page or any desired URL
+            return; // Exit the function to prevent further processing
+        }
+
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
+
         const reservations = await response.json(); // Assuming the response is in JSON format
         createTableRows(reservations); // Call the function to create table rows with the fetched data
     } catch (error) {
@@ -41,7 +56,6 @@ function createTableRows(reservations) {
                 <span class="badge ${reservation.status === 'true' ? 'bg-primary' : 'bg-danger'} rounded-3 fw-semibold">
                   ${reservation.status === 'true' ? 'Confirmado' : 'Não Confirmado'}
                 </span>
-
                 </div>
             </td>
             <td class="border-bottom-0">
@@ -54,7 +68,6 @@ function createTableRows(reservations) {
                 </a>
               </div>
             </td>
-
         `;
 
         tbody.appendChild(tr); // Append the table row to the tbody

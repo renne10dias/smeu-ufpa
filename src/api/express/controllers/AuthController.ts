@@ -35,17 +35,11 @@ export class AuthController {
         try {
             const output = await this.authService.login(email, password);
 
-            // Salva o token como cookie
-            response.cookie('jwt', output.token, {
-                httpOnly: true, // Para proteger contra ataques XSS
-                secure: process.env.NODE_ENV === 'production', // Usa 'secure' em produção
-                maxAge: 3600000, // Tempo de vida do cookie (1 hora)
-            });
-
-            // Retorna a mensagem e o link de redirecionamento na resposta
-            return response.status(output.httpCode).json({
+             // Return the message and token in the response
+             return response.status(output.httpCode).json({
                 message: output.message,
-                redirectUrl: output.redirectUrl, // URL de redirecionamento
+                token: output.token, // JWT token to be saved in session storage
+                redirectUrl: output.redirectUrl,
             });
 
         } catch (error) {

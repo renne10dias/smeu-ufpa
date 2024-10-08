@@ -8,10 +8,25 @@ function getQueryParam(param) {
 async function fetchReservationData() {
   try {
     const uuid = getQueryParam('uuid-reservation');
-    const response = await fetch(`http://localhost:8000/reservation/get-reservation/${uuid}`); // Replace with your API endpoint
+    const token = sessionStorage.getItem('token'); // Retrieve the token from session storage
+    const response = await fetch(`http://localhost:8000/reservation/get-reservation/${uuid}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `${token}`, // Add the token to the headers
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // Check for 403 Forbidden status
+    if (response.status === 403) {
+      window.location.href = '../../login/index.html'; // Redirect to the login page or any desired URL
+      return; // Exit the function to prevent further processing
+    }
+
     if (!response.ok) {
       throw new Error('Network response was not ok ' + response.statusText);
     }
+    
     const reservationData = await response.json();
     populateReservationDetails(reservationData);
   } catch (error) {
@@ -38,7 +53,7 @@ function populateReservationDetails(data) {
   document.getElementById('userEmail').textContent = data.user.email;
 
   // Show or hide the Confirmar Reserva button based on status
-  const confirmButton = document.getElementById('confirmReservationButton');
+  const confirmButton = document.getElementById('spacesContainer');
   if (data.status !== "true") {
     confirmButton.style.display = 'block'; // Show button if status is not true
     confirmButton.onclick = () => changeReservationStatus(data.uuid); // Set the onclick event
@@ -50,12 +65,20 @@ function populateReservationDetails(data) {
 // Function to change reservation status
 async function changeReservationStatus(uuid) {
   try {
+    const token = sessionStorage.getItem('token'); // Retrieve the token from session storage
     const response = await fetch(`http://localhost:8000/reservation/confirm-reservation/${uuid}`, {
       method: 'GET', // Use GET for changing status
       headers: {
+        'Authorization': `${token}`, // Add the token to the headers
         'Content-Type': 'application/json' // This may be optional for GET requests
       }
     });
+
+    // Check for 403 Forbidden status
+    if (response.status === 403) {
+      window.location.href = '../../login/index.html'; // Redirect to the login page or any desired URL
+      return; // Exit the function to prevent further processing
+    }
 
     if (!response.ok) {
       throw new Error('Network response was not ok ' + response.statusText);

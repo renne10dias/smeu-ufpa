@@ -13,7 +13,9 @@ interface TokenPayload {
 export class AuthMiddleware {
     public static authenticateRoles(allowedRoles: string[]) {
         return async (req: Request, res: Response, next: NextFunction) => {
-            const token = req.cookies.token; // Pega o token do cookie
+            //const token = req.cookies.token; // Pega o token do cookie
+
+            const token = req.headers.authorization?.split(' ')[1]; // 'Bearer <token>'
 
             if (!token) {
                 return res.status(401).json({ message: 'Token de autenticação não fornecido' });
@@ -46,7 +48,7 @@ export class AuthMiddleware {
                 }
 
                 // Verifica se o tipo de usuário está permitido
-                if (!allowedRoles.includes(user.userType.typeUser)) {
+                if (!allowedRoles.includes(user.userType.uuid)) {
                     return res.status(403).json({ message: 'Acesso não permitido para o seu tipo de usuário' });
                 }
 

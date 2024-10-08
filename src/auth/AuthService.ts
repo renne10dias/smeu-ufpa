@@ -85,7 +85,7 @@ export class AuthService {
             return {
                 httpCode: 200,
                 message: "Login bem-sucedido",
-                token,  // Token JWT gerado
+                token: "Bearer " + token,
                 redirectUrl: redirectLink
             };
 

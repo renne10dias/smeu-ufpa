@@ -27,15 +27,29 @@ document.getElementById('createSpaceForm').addEventListener('submit', function(e
         console.log(key, value);
     }
 
+    // Retrieve the token from session storage
+    const token = sessionStorage.getItem('token'); // Use the key you stored the token with
+    console.log(token);
+
     // Send the form data to the API
     fetch('http://localhost:8000/spaces', {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'Authorization': `${token}` // Add the token to the Authorization header
+        }
     })
     .then(response => {
+        if (response.status === 403) {
+            // Redirect to another page if access is forbidden
+            window.location.href = '../../login/index.html'; // Change this to your desired URL
+            return; // Exit the function
+        }
+
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
+        
         return response.json();
     })
     .then(data => {
@@ -43,7 +57,7 @@ document.getElementById('createSpaceForm').addEventListener('submit', function(e
         alert("Criado com sucesso");
         
         // Clear the form after successful submission
-       document.getElementById('createSpaceForm').reset();
+        document.getElementById('createSpaceForm').reset();
     })
     .catch(error => {
         console.error('Error:', error);

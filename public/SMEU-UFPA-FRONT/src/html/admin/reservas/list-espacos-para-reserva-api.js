@@ -1,10 +1,25 @@
 // Function to fetch spaces from the API
 async function fetchSpaces() {
     try {
-        const response = await fetch('http://localhost:8000/spaces'); // Replace with your API endpoint
+        const token = sessionStorage.getItem('token'); // Retrieve the token from session storage
+        const response = await fetch('http://localhost:8000/spaces', {
+            method: 'GET',
+            headers: {
+                'Authorization': `${token}`, // Add the token to the headers
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Check for 403 Forbidden status
+        if (response.status === 403) {
+            window.location.href = '../../login/index.html'; // Redirect to the login page or any desired URL
+            return; // Exit the function to prevent further processing
+        }
+
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
+
         const spaces = await response.json(); // Assuming the response is in JSON format
         createCards(spaces); // Call the function to create cards with the fetched data
     } catch (error) {
