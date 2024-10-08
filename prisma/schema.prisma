@@ -16,7 +16,7 @@ model User {
   uuid         String        @id @default(uuid()) @map("uuid")
   name         String        @map("name")
   surname      String        @map("surname")
-  email        String        @map("email")
+  email        String        @unique @map("email")
   passwordHash String        @map("password_hash")
   createdAt    DateTime      @map("created_at")
   activated    Boolean       @map("actived")

@@ -371,7 +371,7 @@ export class ReservationRepository implements ReservationRepositoryInterface {
     
             // Se não houver reservas, retorna um array vazio
             if (reservations.length === 0) {
-                return [];
+                return [];  
             }
     
             // Mapeia o resultado para o DTO de saída

@@ -4,6 +4,8 @@ import { ReservationRoutes } from "./api/express/routes/ReservationRoutes";
 import { SpaceRoutes } from "./api/express/routes/SpaceRoutes";
 import { UserRoutes } from "./api/express/routes/UserRoutes";
 import { ImageRoutes } from "./api/express/routes/ImageRoutes";
+import { AuthRoutes } from "./api/express/routes/AuthRoutes";
+
 
 function main() {
     const api = ApiExpress.getInstance(); // Obtém a instância do ApiExpress
@@ -14,6 +16,7 @@ function main() {
     UserRoutes.registerRoutes(ApiExpress.getInstance());
     ReservationRoutes.registerRoutes(ApiExpress.getInstance());
     ImageRoutes.registerRoutes(ApiExpress.getInstance());
+    AuthRoutes.registerRoutes(ApiExpress.getInstance());
 
     // Início do servidor
     api.start(8000);

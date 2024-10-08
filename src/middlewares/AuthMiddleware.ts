@@ -1,26 +1,66 @@
-import { Request, Response, NextFunction } from "express";
-import { AuthJwt } from "../util/jwt/AuthJwt"; // Ajuste o caminho para a classe AuthJwt
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client'; // Importa o Prisma Client
+
+const prisma = new PrismaClient(); // Instancia o Prisma Client
+
+interface TokenPayload {
+    uuid: string;
+    iat: number;
+    exp: number;
+}
 
 export class AuthMiddleware {
-    private authJwt: AuthJwt;
+    public static authenticateRoles(allowedRoles: string[]) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            const token = req.cookies.token; // Pega o token do cookie
 
-    constructor(secret: string) {
-        this.authJwt = new AuthJwt(secret);
+            if (!token) {
+                return res.status(401).json({ message: 'Token de autenticação não fornecido' });
+            }
+
+            try {
+                const secretKey = process.env.JWT_SECRET || 'secreta-chave';
+                const decoded = jwt.verify(token, secretKey) as TokenPayload;
+
+                // Valida o usuário e sua role no banco de dados
+                const user = await prisma.user.findUnique({
+                    where: {
+                        uuid: decoded.uuid, // O ID do usuário que você deseja buscar
+                    },
+                    select: {
+                        uuid: true,        // Seleciona o uuid do usuário
+                        activated: true,   // Seleciona o status de ativação do usuário
+                        userType: {        // Inclui os campos específicos do UserType
+                            select: {
+                                uuid: true,    // Seleciona o uuid do tipo de usuário
+                                typeUser: true // Seleciona o tipo de usuário
+                            }
+                        }
+                    }
+                });
+
+                // Verifica se o usuário existe e se está ativado
+                if (!user || !user.activated) {
+                    return res.status(403).json({ message: 'Acesso não permitido para o seu tipo de usuário ou usuário não ativado' });
+                }
+
+                // Verifica se o tipo de usuário está permitido
+                if (!allowedRoles.includes(user.userType.typeUser)) {
+                    return res.status(403).json({ message: 'Acesso não permitido para o seu tipo de usuário' });
+                }
+
+                // Adiciona as informações do usuário na requisição
+                req.user = {
+                    uuid: user.uuid,
+                    role: user.userType.typeUser,
+                };
+
+                next(); // Passa para o próximo middleware ou controlador
+            } catch (error) {
+                console.error('Erro na autenticação:', error);
+                return res.status(403).json({ message: 'Token inválido ou expirado' });
+            }
+        };
     }
-
-    public verifyToken = (req: Request, res: Response, next: NextFunction) => {
-        const token = req.headers['authorization']?.split(' ')[1]; // Pega o token do cabeçalho Authorization
-
-        if (!token) {
-            return res.status(401).json({ error: "Token não fornecido" }); // Retorna erro se não houver token
-        }
-
-        try {
-            const decoded = this.authJwt.verifyToken(token); // Verifica o token
-            req.user = decoded; // Salva os dados do usuário na requisição
-            next(); // Passa para o próximo middleware ou rota
-        } catch (error) {
-            return res.status(401).json({ error: "Token inválido" }); // Retorna erro se o token for inválido
-        }
-    };
 }

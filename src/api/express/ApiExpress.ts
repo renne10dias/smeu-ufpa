@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 export class ApiExpress {
     private static instance: ApiExpress;
@@ -15,8 +15,7 @@ export class ApiExpress {
         return ApiExpress.instance;
     }
 
-    // Definindo tipos para Controller e métodos
-    public addPostRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string, uploadMiddleware?: any) {
+    public addPostRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string, middleware?: any) {
         const controller = Controller.build();
 
         const handler = async (req: Request, res: Response) => {
@@ -27,14 +26,14 @@ export class ApiExpress {
             }
         };
 
-        if (uploadMiddleware) {
-            this.routes.push({ method: 'POST', path, handler: [uploadMiddleware, handler] });
+        if (middleware) {
+            this.routes.push({ method: 'POST', path, handler: [middleware, handler] });
         } else {
             this.routes.push({ method: 'POST', path, handler });
         }
     }
 
-    public addGetRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string) {
+    public addGetRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string, middleware?: any) {
         const controller = Controller.build();
 
         const handler = async (req: Request, res: Response) => {
@@ -45,10 +44,14 @@ export class ApiExpress {
             }
         };
 
-        this.routes.push({ method: 'GET', path, handler });
+        if (middleware) {
+            this.routes.push({ method: 'GET', path, handler: [middleware, handler] });
+        } else {
+            this.routes.push({ method: 'GET', path, handler });
+        }
     }
 
-    public addPutRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string) {
+    public addPutRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string, middleware?: any) {
         const controller = Controller.build();
 
         const handler = async (req: Request, res: Response) => {
@@ -59,10 +62,14 @@ export class ApiExpress {
             }
         };
 
-        this.routes.push({ method: 'PUT', path, handler });
+        if (middleware) {
+            this.routes.push({ method: 'PUT', path, handler: [middleware, handler] });
+        } else {
+            this.routes.push({ method: 'PUT', path, handler });
+        }
     }
 
-    public addDeleteRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string) {
+    public addDeleteRoute<T extends { build: () => any }>(path: string, Controller: T, methodName: string, middleware?: any) {
         const controller = Controller.build();
 
         const handler = async (req: Request, res: Response) => {
@@ -73,7 +80,11 @@ export class ApiExpress {
             }
         };
 
-        this.routes.push({ method: 'DELETE', path, handler });
+        if (middleware) {
+            this.routes.push({ method: 'DELETE', path, handler: [middleware, handler] });
+        } else {
+            this.routes.push({ method: 'DELETE', path, handler });
+        }
     }
 
     public start(port: number) {
@@ -82,6 +93,8 @@ export class ApiExpress {
 
         app.use(express.json());
         app.use(cors());
+        app.use(cookieParser());
+
 
         this.routes.forEach(route => {
             if (Array.isArray(route.handler)) {
