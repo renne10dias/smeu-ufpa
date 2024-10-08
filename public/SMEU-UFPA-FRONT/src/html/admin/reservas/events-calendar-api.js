@@ -2,7 +2,15 @@ $(document).ready(function() {
   // Function to fetch events from the API
   async function fetchEventsFromAPI() {
     try {
-      const response = await fetch('http://localhost:8000/reservation/list-all-reservations'); // Replace with your actual API endpoint
+     
+      const token = sessionStorage.getItem('token'); // Retrieve the token from session storage
+      const response = await fetch('http://localhost:8000/reservation/list-all-reservations', {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`, // Add the token to the headers
+          'Content-Type': 'application/json'
+        }
+      });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
