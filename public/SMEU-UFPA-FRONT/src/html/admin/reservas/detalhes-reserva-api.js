@@ -53,7 +53,7 @@ function populateReservationDetails(data) {
   document.getElementById('userEmail').textContent = data.user.email;
 
   // Show or hide the Confirmar Reserva button based on status
-  const confirmButton = document.getElementById('spacesContainer');
+  const confirmButton = document.getElementById('confirmReservationButton');
   if (data.status !== "true") {
     confirmButton.style.display = 'block'; // Show button if status is not true
     confirmButton.onclick = () => changeReservationStatus(data.uuid); // Set the onclick event
