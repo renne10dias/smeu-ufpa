@@ -76,6 +76,20 @@ export type getReservationOutput = {
     };
 };
 
+export type checkStatusRevervaUpdateTime = {
+    uuid: string;
+    createdAt: Date;
+    status: string; // ou pode ser um enum se tiver valores fixos
+    user: {
+        uuid: string;
+        name: string; // Adicione outros campos necessários
+    };
+    space: {
+        uuid: string;
+        name: string; // Adicione outros campos necessários
+    };
+}
+
 
 
 
@@ -93,5 +107,7 @@ export interface ReservationRepositoryInterface {
     
     getReservationWithShift(reservationUuid: string): Promise<getReservationWithShiftRepositoryOutputDto[]>;
     listAllReservationsWithShifts(): Promise<getReservationWithShiftRepositoryOutputDto[]>;
+
     listAllReservations(): Promise<getReservationRepositoryOutputDto[]>;
+    listAndCheckReservations(): Promise<checkStatusRevervaUpdateTime[]>;
 }

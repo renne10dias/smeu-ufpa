@@ -61,7 +61,12 @@ export class UserRepository implements UserRepositoryInterface {
 
     // List (Read)
     public async list(): Promise<ListRepositoryOutputDto_repository[]> {
-        const users = await this.prisma.user.findMany();
+        const users = await this.prisma.user.findMany({
+            include: {
+                userType: true, // Incluir o relacionamento com a tabela UserType
+            },
+        });
+    
         return users.map(user => ({
             uuid: user.uuid,
             name: user.name,
@@ -71,8 +76,12 @@ export class UserRepository implements UserRepositoryInterface {
             createdAt: user.createdAt,
             activated: user.activated,
             userTypeId: user.userTypeId,
+            userType: {
+                type: user.userType.typeUser, // Incluir o campo de tipo de usuário
+            },
         }));
     }
+    
 
 
     // ListArrayList (Read)

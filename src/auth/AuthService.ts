@@ -63,10 +63,10 @@ export class AuthService {
                     redirectLink = "http://127.0.0.1:5500/public/SMEU-UFPA-FRONT/src/html/admin/dashboard/dashboard.html";
                     break;
                 case UserRoleEnum.ENPLOYEE:
-                    redirectLink = "http://127.0.0.1:5500/public/SMEU-UFPA-FRONT/src/html/admin/employee/employee.html";
+                    redirectLink = "http://127.0.0.1:5500/public/SMEU-UFPA-FRONT/src/html/employee/calendar/calendar.html";
                     break;
                 case UserRoleEnum.USER:
-                    redirectLink = "http://127.0.0.1:5500/public/SMEU-UFPA-FRONT/src/html/admin/user/user.html";
+                    redirectLink = "http://127.0.0.1:5500/public/SMEU-UFPA-FRONT/src/html/user/calendar/calendar.html";
                     break;
                 default:
                     redirectLink = "http://127.0.0.1:5500/public/SMEU-UFPA-FRONT/src/html/home.html"; // Default redirect if role is unrecognized

@@ -34,7 +34,6 @@ export class ReservationController {
             status: Joi.boolean().required(),      // status deve ser booleano
             details: Joi.string().required(),      // details deve ser uma string
             spaceId: Joi.string().required(),      // spaceId deve ser uma string (UUID)
-            userId: Joi.string().required(),       // userId deve ser uma string (UUID)
             shiftIds: Joi.array().items(Joi.string().uuid()).required()  // shiftIds deve ser um array de strings (UUIDs)
         });
 
@@ -44,12 +43,19 @@ export class ReservationController {
             return response.status(400).json({ error: 'Validation error: ' + error.details[0].message });
         }
 
+        
+
         try {
             // Extração dos dados da requisição
             const { startDate, endDate, status, details, spaceId, userId, shiftIds } = request.body;
+            const userUuid = request.user?.uuid; 
 
+            if (!userUuid) {
+                return response.status(400).json({ message: 'Usuário não autenticado' });
+            }
+            
             // Criação da entidade Reservation
-            const reservation = new Reservation(startDate, endDate, status, details, spaceId, userId, shiftIds);
+            const reservation = new Reservation(startDate, endDate, status, details, spaceId, userUuid, shiftIds);
 
             // Chamada do serviço de criação da reserva
             // Chamada do serviço de criação da reserva

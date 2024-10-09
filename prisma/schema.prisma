@@ -45,7 +45,7 @@ model Space {
   equipment      String?       @map("equipment")
   activityStatus Boolean       @map("activity_status")
   reservations   Reservation[]
-  files          File[]        @relation("SpaceFiles") // Add this line
+  files          File[]        @relation("SpaceFiles")
 
   @@map("tb_spaces")
 }
@@ -67,7 +67,7 @@ model Reservation {
   createdAt DateTime           @map("created_at")
   spaceId   String             @map("tb_spaces_uuid")
   userId    String             @map("tb_users_uuid")
-  shifts    ReservationShift[] @relation("ReservationShifts")
+  shifts    ReservationShift[]  @relation("ReservationShifts") // Removido onDelete aqui
   user      User               @relation(fields: [userId], references: [uuid])
   space     Space              @relation(fields: [spaceId], references: [uuid])
 
@@ -92,7 +92,7 @@ model ReservationShift {
   userId        String @map("tb_reservations_tb_users_uuid")
   shiftId       String @map("tb_shift_uuid")
 
-  reservation Reservation @relation(name: "ReservationShifts", fields: [reservationId, spaceId, userId], references: [uuid, spaceId, userId])
+  reservation Reservation @relation(name: "ReservationShifts", fields: [reservationId, spaceId, userId], references: [uuid, spaceId, userId], onDelete: Cascade) // Adicionando onDelete: Cascade aqui
   shift       Shift       @relation(name: "ShiftReservations", fields: [shiftId], references: [uuid])
 
   @@id([reservationId, spaceId, userId, shiftId])
@@ -105,7 +105,7 @@ model File {
   path       String   @map("path")
   dateUpload DateTime @map("date_upload")
   spaceId    String   @map("tb_spaces_uuid")
-  space      Space    @relation("SpaceFiles", fields: [spaceId], references: [uuid]) // Updated relation name
+  space      Space    @relation("SpaceFiles", fields: [spaceId], references: [uuid])
 
   @@unique([uuid, spaceId])
   @@index([spaceId])

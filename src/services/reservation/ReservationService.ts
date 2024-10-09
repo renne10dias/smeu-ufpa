@@ -58,6 +58,8 @@ export class ReservationService implements ReservationServiceInterface {
             throw new Error("Erro ao criar a reserva, tente novamente mais tarde.");
         }
     }
+
+   
     
     
 
@@ -245,16 +247,21 @@ export class ReservationService implements ReservationServiceInterface {
 
     public async listAllReservations() {
         try {
+            // Chama a função para verificar e deletar reservas expiradas
+            const check = await this.repository.listAndCheckReservations();
+    
+            // Busca todas as reservas
             const reservations = await this.repository.listAllReservations();
-
+    
             // Se necessário, você pode realizar mais lógica de negócios aqui
             return reservations;
-
+    
         } catch (error) {
             console.error('Erro ao buscar reserva com turno no serviço:', error);
             throw new Error('Erro ao buscar reserva no serviço');
         }
     }
+    
 
     
 

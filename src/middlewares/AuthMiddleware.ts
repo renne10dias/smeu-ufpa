@@ -55,7 +55,6 @@ export class AuthMiddleware {
                 // Adiciona as informações do usuário na requisição
                 req.user = {
                     uuid: user.uuid,
-                    role: user.userType.typeUser,
                 };
 
                 next(); // Passa para o próximo middleware ou controlador

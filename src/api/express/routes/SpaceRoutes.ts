@@ -11,9 +11,9 @@ export class SpaceRoutes {
         api.addPostRoute("/spaces", SpaceController, 'create', upload.single('file'));
 
         //api.addGetRoute("/spaces", SpaceController, 'listSpaces');
-        api.addGetRoute("/spaces", SpaceController, 'listSpaces', AuthMiddleware.authenticateRoles([UserRoleEnum.ADMIN]));
+        api.addGetRoute("/spaces", SpaceController, 'listSpaces', AuthMiddleware.authenticateRoles([UserRoleEnum.ADMIN, UserRoleEnum.ENPLOYEE, UserRoleEnum.USER]));
 
-        api.addGetRoute("/spaces/find/detalhes/:id", SpaceController, 'findSpace', AuthMiddleware.authenticateRoles([UserRoleEnum.ADMIN]));
+        api.addGetRoute("/spaces/find/detalhes/:id", SpaceController, 'findSpace', AuthMiddleware.authenticateRoles([UserRoleEnum.ADMIN, UserRoleEnum.ENPLOYEE]));
         api.addGetRoute("/spaces/:id", SpaceController, 'find', AuthMiddleware.authenticateRoles([UserRoleEnum.ADMIN]));
         api.addPutRoute("/spaces/:id", SpaceController, 'update', AuthMiddleware.authenticateRoles([UserRoleEnum.ADMIN]));
         api.addDeleteRoute("/spaces/:id", SpaceController, 'delete', AuthMiddleware.authenticateRoles([UserRoleEnum.ADMIN]));

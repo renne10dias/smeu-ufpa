@@ -26,6 +26,17 @@ auditórios e laboratórios de forma eficiente e automatizada.
 
 - Visitantes - vai poder criar uma conta, visualizar espaços disponiveis e solicitar uma reserva no sistema.
 
+- users teste
+- rennedias2003@gmail.com -> admin
+- nelma@gmail.com -> employee
+- rafael@gmail.com -> user
+
+##### ALGUMAS IMPLEMENTAÇÕES FUTUTRAS
+- Quando uma reserva for criada, se passar cinco minutos e o admin não confirmar a reserva, ela será deletada do banco automaticamente, assim o data que foi reservada anteriormente passa a ficar disponivel.
+
+- Assim que as reservas ficarem no passado, elas serão deletas do banco.
+
+
 #### REQUISITOS NÃO FUNCIONAIS
 - O sistema deve ser acessível através de qualquer dispositivo conectado á internet.
 - A interface do usuário deve ser intuitiva e fácil de usar.

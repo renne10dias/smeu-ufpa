@@ -62,6 +62,7 @@ export class UserService implements UserServiceInterface {
                 email: user.email,
                 // Converte a data UTC para o fuso horário de Brasília para exibição
                 created_at: dayjs.utc(user.createdAt).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ssZ'),
+                userType: user.userType.type
             }));
     
             return mappedUsers;
@@ -70,6 +71,7 @@ export class UserService implements UserServiceInterface {
             throw new Error("Could not retrieve users.");
         }
     }
+    
     
 
     

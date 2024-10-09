@@ -24,6 +24,9 @@ export type ListRepositoryOutputDto_repository = {
     createdAt: Date;
     activated: boolean;
     userTypeId: string;
+    userType: {
+        type: string, // Incluir o campo de tipo de usuário
+    },
 };
 
 export type ListRepositoryOutputDtoArrayUsers_repository = {

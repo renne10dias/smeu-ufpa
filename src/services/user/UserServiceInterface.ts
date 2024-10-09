@@ -11,6 +11,7 @@ export type ListServiceOutputDto_service = {
     surname: string;
     email: string;
     created_at: string;
+    userType: string;
 };
  
 

@@ -2,12 +2,16 @@ import { PrismaClient } from "@prisma/client";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { subMinutes, isBefore } from 'date-fns'; // Biblioteca de manipulação de datas
+
+
 import { ReservationRepositoryInterface, 
          getReservationWithShiftRepositoryOutputDto, 
          getReservation_existsOutputDto, 
          getReservationRepositoryOutputDto,
          getReservationDetails,
-         getReservationOutput 
+         getReservationOutput,
+         checkStatusRevervaUpdateTime
         } from "../ReservationRepositoryInterface";
 
 
@@ -73,6 +77,42 @@ export class ReservationRepository implements ReservationRepositoryInterface {
             return false; // Retorna false se ocorrer um erro
         }
     }
+
+
+
+     // MÉTODO PARA VERIFICAR SE JÁ PASSARAM CINCO MINUTOS DE UMA RESERVA
+     public async listAndCheckReservations(): Promise<checkStatusRevervaUpdateTime[]> {
+        const now = new Date();
+        const fiveMinutesAgo = subMinutes(now, 5); // Calcula o horário de 5 minutos atrás
+
+        // Buscar todas as reservas não confirmadas
+        const reservations = await this.prisma.reservation.findMany({
+            where: {
+                status: 'false', // Supondo que 'pending' representa reservas não confirmadas
+            },
+            include: {
+                user: true,
+                space: true,
+            },
+        });
+
+        for (const reservation of reservations) {
+            // Verifica se a reserva foi criada há mais de 5 minutos
+            if (isBefore(reservation.createdAt, fiveMinutesAgo)) {
+                await this.prisma.reservation.delete({
+                    where: { uuid: reservation.uuid },
+                });
+                console.log(`Reserva ID ${reservation.uuid} foi deletada por expiração.`);
+            }
+        }
+
+        // Filtra e retorna as reservas válidas
+        const validReservations = reservations.filter(reservation => !isBefore(reservation.createdAt, fiveMinutesAgo));
+        
+        return validReservations; // Retorna as reservas válidas
+    }
+
+    
 
 
     // Método para verificar se o turno já existe para uma data específica (ou intervalo de datas)
