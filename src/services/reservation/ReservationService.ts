@@ -30,6 +30,23 @@ export class ReservationService implements ReservationServiceInterface {
         reservation.setUuid(uuid);
         
         try {
+            // Verifica se a data de início é anterior à data atual
+        const now = new Date();
+        if (reservation.getStartDate() < now) {
+            return {
+                httpCode: 400,  // Bad Request
+                //message: 'A data de início da reserva não pode ser anterior à data atual.'
+            };
+        }
+
+        // Verifica se a data de término é anterior à data de início
+        if (reservation.getEndDate() <= reservation.getStartDate()) {
+            return {
+                httpCode: 400,  // Bad Request
+                //message: 'A data de término da reserva deve ser posterior à data de início.'
+            };
+        }
+
             // Verifica a disponibilidade de turno para cada turno solicitado no intervalo de datas
             for (const shiftId of reservation.getShiftIds()) {
                 const isAvailable = await this.repository.checkShiftAvailability(reservation.getStartDate(), reservation.getEndDate(), shiftId);

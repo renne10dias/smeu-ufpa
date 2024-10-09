@@ -34,6 +34,21 @@ export class UserController {
         }
     }
 
+    public async registerUser(request: Request, response: Response): Promise<Response> {
+        try {
+            const { name, surname, email, password } = request.body;
+
+            // Validação de dados (pode ser feita com uma biblioteca como Joi ou class-validator)
+
+            const space = new User(name, surname, email, password, true, "abcdef12-3456-7890-abcd-ef1234567890", undefined, undefined); // UUID será gerado no serviço
+            const output = await this.userService.save(space);
+
+            return response.status(201).json(output); // Status 201 para criação
+        } catch (error) {
+            return response.status(500).json({ error: (error as Error).message });
+        }
+    }
+
     public async list(request: Request, response: Response): Promise<Response> {
         try {
             const output = await this.userService.list();
