@@ -31,10 +31,14 @@ auditórios e laboratórios de forma eficiente e automatizada.
 - nelma@gmail.com -> employee
 - rafael@gmail.com -> user
 
+##### VANTAGENS DE USAR A ARQUITETURA SOLID + MVC
+- Este sistema está escalavel para muitas funcionalidades.
+
 ##### ALGUMAS IMPLEMENTAÇÕES FUTUTRAS
 - Quando uma reserva for criada, se passar cinco minutos e o admin não confirmar a reserva, ela será deletada do banco automaticamente, assim o data que foi reservada anteriormente passa a ficar disponivel.
 
 - Assim que as reservas ficarem no passado, elas serão deletas do banco.
+- Usuários poderão além de visualizar eventos, poderão se inscrever em algum evento criado, realizar chekin, pagamentos de eventos, minicuros, se caso for ter, mas para isso teremos que dividir as reservas em categorias.
 
 
 #### REQUISITOS NÃO FUNCIONAIS
@@ -43,16 +47,11 @@ auditórios e laboratórios de forma eficiente e automatizada.
 - As informações de reserva devem ser armazenadas de forma segura.
 
 
-# 3 - CASOS DE USO 
+
+# 3 - MODELO ENTIDADE RELACIONAMENTO
 Este é o modelo entidade relacionamento do sistema de marcação de espaços físicos da UFPA.
 
-![solid](docs/casodeuso.jpg)
-
-
-# 4 - MODELO ENTIDADE RELACIONAMENTO
-Este é o modelo entidade relacionamento do sistema de marcação de espaços físicos da UFPA.
-
-![solid](docs/smeu-ufpa.png)
+![solid](docs/mer-smeu.png)
 
 # 🚀 Começando
 
